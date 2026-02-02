@@ -1,0 +1,137 @@
+﻿@model Glowify.Models.ViewModels.ProductVM
+
+<form method="post" asp-action="Upsert" enctype="multipart/form-data">
+    <input asp-for="Product.Id" hidden />
+    <input asp-for="Product.ImageUrl" hidden />
+
+    <div class="row">
+        <div class="col-10 offset-1">
+            <div class="border p-4 mt-4 shadow-sm rounded bg-white">
+
+                <div class="row pb-3">
+                    <div class="col-12">
+                        <h2 class="text-primary fw-bold">@(Model.Product.Id != 0 ? "Update" : "Create") Product</h2>
+                        <hr />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="@(Model.Product.Id != 0 ? "col-md-9" : "col-12")">
+
+                        <div class="mb-3">
+                            <label asp-for="Product.Name" class="form-label fw-bold"></label>
+                            <input asp-for="Product.Name" class="form-control" placeholder="Product Name" />
+                            <span asp-validation-for="Product.Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Product.Description" class="form-label fw-bold"></label>
+                            <textarea asp-for="Product.Description" rows="3" class="form-control" placeholder="Product Description"></textarea>
+                            <span asp-validation-for="Product.Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="Product.MainIngredient" class="form-label fw-bold"></label>
+                                <input asp-for="Product.MainIngredient" class="form-control" placeholder="Ex: Vitamin C" />
+                                <span asp-validation-for="Product.MainIngredient" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Product.Stock" class="form-label fw-bold"></label>
+                                <input asp-for="Product.Stock" class="form-control" placeholder="Quantity" />
+                                <span asp-validation-for="Product.Stock" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="Product.ListPrice" class="form-label fw-bold"></label>
+                                <div class="input-group">
+                                    <input asp-for="Product.ListPrice" class="form-control" placeholder="0.00" />
+                                </div>
+                                <span asp-validation-for="Product.ListPrice" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Product.Price" class="form-label fw-bold"></label>
+                                <div class="input-group">
+                                    <input asp-for="Product.Price" class="form-control" placeholder="0.00" />
+                                </div>
+                                <span asp-validation-for="Product.Price" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="Product.Category" class="form-label fw-bold"></label>
+                                <select asp-for="Product.Category" asp-items="@Model.CategoryList" class="form-select">
+                                    <option disabled selected>--Select Category--</option>
+                                </select>
+                                <span asp-validation-for="Product.Category" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="Product.TargetSkinType" class="form-label fw-bold"></label>
+                                <select asp-for="Product.TargetSkinType" asp-items="@Model.SkinTypeList" class="form-select">
+                                    <option disabled selected>--Select Skin Type--</option>
+                                </select>
+                                <span asp-validation-for="Product.TargetSkinType" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Product.ImageUrl" class="form-label fw-bold"></label>
+                            <input type="file" id="uploadBox" name="file" class="form-control" />
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-6 col-md-3">
+                                @if (Model.Product.Id != 0)
+                                {
+                                    <button type="submit" class="btn btn-primary form-control">Update</button>
+                                }
+                                else
+                                {
+                                    <button type="submit" onclick="return ValidateInput()" class="btn btn-primary form-control">Create</button>
+                                }
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <a asp-controller="Product" asp-action="Index" class="btn btn-outline-secondary form-control">Back to List</a>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    @if (Model.Product.Id != 0)
+                    {
+                        <div class="col-md-3 text-center">
+                            <label class="form-label fw-bold text-muted mb-3">Current Image</label>
+                            <div class="p-2 border rounded shadow-sm">
+                                <img src="@Model.Product.ImageUrl" width="100%" class="rounded" style="object-fit:cover;" />
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+    <script>
+        function ValidateInput(){
+            if(document.getElementById("uploadBox").value==""){
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Oops...',
+                  text: 'Please upload an Image!',
+                });
+                return false;
+            }
+            return true;
+        }
+    </script>
+}

@@ -1,0 +1,74 @@
+﻿@model IEnumerable<Glowify.Models.Product>
+
+<div class="container pb-3">
+	<div class="row">
+		@foreach (var product in Model)
+		{
+			<div class="col-lg-3 col-md-6">
+				<div class="row p-2">
+					<div class="col-12 p-1" style="border:1px solid #008cba; border-radius: 5px;">
+						<div class="card border-0">
+							<div style="position: relative;">
+								@if (product.ImageUrl != null)
+								{
+									<img src="@product.ImageUrl" class="card-img-top rounded" style="height: 250px; object-fit: cover;" />
+								}
+								else
+								{
+									<img src="https://via.placeholder.com/300x300?text=No+Image" class="card-img-top rounded" style="height: 250px; object-fit: cover;" />
+								}
+
+								@if (product.Stock <= 0)
+								{
+									<div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0, 0.6); display: flex; justify-content: center; align-items: center; border-radius: 5px;">
+										<div style="text-align:center;">
+											<span style="color: white; font-weight: bold; font-size: 18px; border: 2px solid white; padding: 10px 20px; text-transform: uppercase; letter-spacing: 2px;">
+												SOLD OUT
+											</span>
+										</div>
+
+									</div>
+								}
+							</div>
+
+							<div class="card-body pb-0 pl-1 pr-1">
+								<div class="pl-1">
+									<p class="card-title h5 text-dark opacity-75 text-uppercase text-center">@product.Name</p>
+									<p class="card-title text-warning text-center">by <b>Glowify</b></p>
+								</div>
+								<div class="pl-1 text-center">
+									@if (product.ListPrice > product.Price)
+									{
+										<p class="mb-0">
+											<span class="text-decoration-line-through text-muted">
+												@product.ListPrice.ToString("c")
+											</span>
+											<span class="fw-bold text-danger ms-2">
+												@product.Price.ToString("c")
+											</span>
+										</p>
+									}
+									else
+									{
+										<p class="mb-0">
+											<span class="fw-bold text-primary">
+												@product.Price.ToString("c")
+											</span>
+										</p>
+									}
+								</div>
+							</div>
+
+							<div>
+								<a asp-action="Details" asp-route-productId="@product.Id" class="btn btn-primary bg-gradient border-0 form-control mt-2">
+									Details
+								</a>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+</div>

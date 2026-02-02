@@ -1,0 +1,63 @@
+﻿@model Coupon
+
+<form method="post">
+    <div class="row">
+        <div class="col-10 offset-1">
+            <div class="border p-4 mt-4 shadow-sm rounded">
+                <div class="row pb-3">
+                    <h2 class="text-primary">Create Coupon</h2>
+                    <hr />
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Code" class="form-label fw-bold"></label>
+                        <input asp-for="Code" class="form-control" placeholder="Ex: SUMMER2024" />
+                        <span asp-validation-for="Code" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 d-flex align-items-center mt-4">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" asp-for="IsActive" checked>
+                            <label class="form-check-label fw-bold" asp-for="IsActive">Is Coupon Active?</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="DiscountAmount" class="form-label fw-bold"></label>
+                        <div class="input-group">
+                            <input asp-for="DiscountAmount" type="number" class="form-control" placeholder="0.00" />
+                        </div>
+                        <span asp-validation-for="DiscountAmount" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="MinAmount" class="form-label fw-bold"></label>
+                        <div class="input-group">
+                            <input asp-for="MinAmount" type="number" class="form-control" placeholder="0.00" />
+                        </div>
+                        <span asp-validation-for="MinAmount" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-6 col-md-3">
+                        <button type="submit" class="btn btn-primary form-control">Create</button>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a asp-action="Index" class="btn btn-outline-secondary form-control">Back to List</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

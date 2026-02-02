@@ -1,0 +1,96 @@
+﻿@model Glowify.Models.ShoppingCart
+
+<form method="post">
+    <input asp-for="ProductId" hidden />
+
+    <div class="card shadow border-0 mt-4 mb-4">
+        <div class="card-header bg-secondary bg-gradient text-light py-4">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h3 class="text-white text-uppercase">@Model.Product.Name</h3>
+                    <p class="text-white-50 fw-semibold mb-0">by Glowify</p>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="py-3">
+                <div class="row">
+                    <div class="col-12 col-lg-3 offset-lg-1 text-center mb-3">
+                        <img src="@(string.IsNullOrEmpty(Model.Product.ImageUrl) ? "https://placehold.co/500x600/png" : Model.Product.ImageUrl)"
+                             width="100%" class="rounded" />
+                    </div>
+                    <div class="col-12 col-lg-6 offset-lg-1">
+                        <div class="col-12 col-md-6 pb-4">
+                            <span class="badge bg-info pt-2" style="height:30px;">@Model.Product.Category</span>
+                            <span class="badge bg-warning text-dark pt-2" style="height:30px;">@Model.Product.TargetSkinType Skin</span>
+                        </div>
+
+                        <div class="row ps-2">
+                            <h6 class="text-dark text-opacity-50 ">Description:</h6>
+                            <p class="text-secondary lh-sm">@Model.Product.Description</p>
+                        </div>
+
+                        <div class="row ps-2">
+                            <h6 class="text-dark text-opacity-50 ">Main Ingredient:</h6>
+                            <p class="text-secondary">@Model.Product.MainIngredient</p>
+                        </div>
+
+                        <div class="row pl-2 my-3">
+                            <h4 class="text-success font-weight-bold">
+                                Price: @Model.Product.Price.ToString("c")
+                            </h4>
+                        </div>
+
+                        <div class="row p-lg-2 my-3">
+                            @if (Model.Product.Stock > 10)
+                            {
+                                <span class="badge bg-success p-2" style="font-size:14px;">In Stock</span>
+                            }
+                            else if (Model.Product.Stock > 0 && Model.Product.Stock <= 10)
+                            {
+                                <span class="badge bg-warning text-dark p-2" style="font-size:14px;">
+                                    Hurry! Only @Model.Product.Stock left in stock!
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger p-2" style="font-size:14px;">Out of Stock</span>
+                            }
+                        </div>
+
+                        <div class="row pl-2 mb-3">
+                            <div class="col-md-4">
+                                <div class="input-group mb-3">
+                                    @if (Model.Product.Stock > 0)
+                                    {
+                                        <span class="input-group-text bg-primary text-white border-0 fw-semibold">
+                                            Count
+                                        </span>
+                                        <input asp-for="Count" type="number" min="1" max="@Model.Product.Stock" class="form-control text-end" />
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12 col-md-6 pb-1">
+                                @if (Model.Product.Stock > 0)
+                                {
+                                    <button type="submit" class="btn btn-primary bg-gradient w-100 py-2 text-uppercase fw-semibold">
+                                        Add to Cart 🛒
+                                    </button>
+                                }
+                            </div>
+
+                            <div class="col-12 col-md-6 pb-1">
+                                <a asp-action="Index" class="btn btn-outline-primary bg-gradient w-100 py-2 text-uppercase fw-semibold">
+                                    Back to Home
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
