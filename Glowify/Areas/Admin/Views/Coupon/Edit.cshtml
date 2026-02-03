@@ -1,11 +1,13 @@
 ﻿@model Coupon
 
 <form method="post">
+    <input asp-for="Id" hidden />
+
     <div class="row">
         <div class="col-10 offset-1">
             <div class="border p-4 mt-4 shadow-sm rounded">
                 <div class="row pb-3">
-                    <h2 class="text-primary">Create Coupon</h2>
+                    <h2 class="text-primary">Edit Coupon</h2>
                     <hr />
                 </div>
 
@@ -18,7 +20,7 @@
 
                     <div class="col-md-6 d-flex align-items-center mt-4">
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" role="switch" asp-for="IsActive" checked>
+                            <input class="form-check-input" type="checkbox" role="switch" asp-for="IsActive">
                             <label class="form-check-label fw-bold" asp-for="IsActive">Is Coupon Active?</label>
                         </div>
                     </div>
@@ -40,7 +42,7 @@
 
                 <div class="row mt-4">
                     <div class="col-6 col-md-3">
-                        <button type="submit" class="btn btn-primary form-control">Create</button>
+                        <button type="submit" class="btn btn-primary form-control">Update</button>
                     </div>
                     <div class="col-6 col-md-3">
                         <a asp-action="Index" class="btn btn-outline-secondary form-control">Back to List</a>
