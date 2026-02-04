@@ -37,12 +37,16 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="Admin" asp-controller="Coupon" asp-action="Index">Coupons</a>
                             </li>
-                        }
 
-                        @if (User.IsInRole(SD.Role_Admin) || User.IsInRole(SD.Role_Customer))
-                        {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="Admin" asp-controller="Order" asp-action="Index">Orders</a>
+                            </li>
+                        }
+
+                        @if (User.IsInRole(SD.Role_Customer))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="Customer" asp-controller="Order" asp-action="Index">Orders</a>
                             </li>
                         }
 

@@ -61,32 +61,35 @@
                                     <input value="@Model.OrderHeader.OrderDate.ToShortDateString()" readonly class="form-control" />
                                 </div>
                             </div>
-                            <div class="row my-1">
-                                <div class="col-3">Carrier</div>
-                                <div class="col-9">
-                                    @if (Model.OrderHeader.OrderStatus == SD.StatusInProcess)
-                                    {
-                                        <input asp-for="OrderHeader.Carrier" id="carrier" class="form-control" />
-                                    }
-                                    else
-                                    {
-                                        <input asp-for="OrderHeader.Carrier" readonly class="form-control" />
-                                    }
+                            @if (Model.OrderHeader.OrderStatus == SD.StatusShipped)
+                            {
+                                <div class="row my-1">
+                                    <div class="col-3">Carrier</div>
+                                    <div class="col-9">
+                                        @if (Model.OrderHeader.OrderStatus == SD.StatusInProcess)
+                                        {
+                                            <input asp-for="OrderHeader.Carrier" id="carrier" class="form-control" />
+                                        }
+                                        else
+                                        {
+                                            <input asp-for="OrderHeader.Carrier" readonly class="form-control" />
+                                        }
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="row my-1">
-                                <div class="col-3">Tracking</div>
-                                <div class="col-9">
-                                    @if (Model.OrderHeader.OrderStatus == SD.StatusInProcess)
-                                    {
-                                        <input asp-for="OrderHeader.TrackingNumber" id="trackingNumber" class="form-control" />
-                                    }
-                                    else
-                                    {
-                                        <input asp-for="OrderHeader.TrackingNumber" readonly class="form-control" />
-                                    }
+                                <div class="row my-1">
+                                    <div class="col-3">Tracking</div>
+                                    <div class="col-9">
+                                        @if (Model.OrderHeader.OrderStatus == SD.StatusInProcess)
+                                        {
+                                            <input asp-for="OrderHeader.TrackingNumber" id="trackingNumber" class="form-control" />
+                                        }
+                                        else
+                                        {
+                                            <input asp-for="OrderHeader.TrackingNumber" readonly class="form-control" />
+                                        }
+                                    </div>
                                 </div>
-                            </div>
+                            }
                         </div>
 
                         <div class="col-12 col-lg-5 offset-lg-1">
@@ -122,15 +125,6 @@
                                     </div>
                                 </li>
                             </ul>
-                            @if (Model.OrderHeader.OrderStatus == SD.StatusApproved)
-                            {
-                                <button type="submit" asp-action="StartProcessing" class="btn btn-primary form-control my-1">Start Processing</button>
-                            }
-
-                            @if (Model.OrderHeader.OrderStatus == SD.StatusInProcess)
-                            {
-                                <button type="submit" onclick="return validateInput()" asp-action="ShipOrder" class="btn btn-primary form-control my-1">Ship Order</button>
-                            }
 
                             @if (Model.OrderHeader.OrderStatus != SD.StatusRefunded &&
                                  Model.OrderHeader.OrderStatus != SD.StatusCancelled &&

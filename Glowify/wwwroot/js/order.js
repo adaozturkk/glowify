@@ -24,9 +24,13 @@ $(document).ready(function () {
 });
 
 function loadDataTable(status) {
+    var table = $('#tblData');
+    var apiUrl = table.data('url');
+    var detailsUrl = table.data('details-url');
+
     dataTable = $('#tblData').DataTable({
         "ajax": {
-            "url": "/Admin/Order/GetAll?status=" + status
+            "url": apiUrl + "?status=" + status
         },
         "order": [[0, "desc"]],
         "columns": [
@@ -41,7 +45,7 @@ function loadDataTable(status) {
                 "render": function (data) {
                     return `
                         <div class="w-75 btn-group" role="group">
-                        <a href="/Admin/Order/Details?orderId=${data}"
+                        <a href="${detailsUrl}?orderId=${data}"
                         class="btn btn-primary mx-2"> <i class="bi bi-pencil-square"></i> Details</a>
                         </div>
                         `

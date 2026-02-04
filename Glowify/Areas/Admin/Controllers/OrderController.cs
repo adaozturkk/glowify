@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Glowify.Areas.Admin.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [Area("Admin")]
     public class OrderController : Controller
     {
@@ -34,22 +34,7 @@ namespace Glowify.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetAll(string status)
         {
-            IEnumerable<OrderHeader> orderHeaders;
-
-            if (User.IsInRole(SD.Role_Admin))
-            {
-                orderHeaders = _db.OrderHeaders.Include(u => u.ApplicationUser).ToList();
-            }
-            else
-            {
-                var claimsIdentity = (ClaimsIdentity)User.Identity;
-                var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
-
-                orderHeaders = _db.OrderHeaders
-                    .Where(u => u.ApplicationUserId == claim.Value && u.PaymentStatus != SD.PaymentStatusPending)
-                    .Include(u => u.ApplicationUser)
-                    .ToList();
-            }
+            IEnumerable<OrderHeader> orderHeaders = _db.OrderHeaders.Include(u => u.ApplicationUser).ToList();
 
             switch (status)
             {
@@ -87,7 +72,6 @@ namespace Glowify.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = SD.Role_Admin)]
         public IActionResult StartProcessing(OrderVM orderVM)
         {
             var orderHeader = _db.OrderHeaders.FirstOrDefault(u => u.Id == orderVM.OrderHeader.Id);
@@ -98,7 +82,6 @@ namespace Glowify.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = SD.Role_Admin)]
         public async Task<IActionResult> ShipOrder(OrderVM orderVM)
         {
             var orderHeader = _db.OrderHeaders.FirstOrDefault(u => u.Id == orderVM.OrderHeader.Id);
@@ -146,7 +129,6 @@ namespace Glowify.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        [Authorize]
         public IActionResult CancelOrder(OrderVM orderVM)
         {
             var orderHeader = _db.OrderHeaders.FirstOrDefault(u => u.Id == orderVM.OrderHeader.Id);
