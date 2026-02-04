@@ -19,8 +19,7 @@ namespace Glowify.Areas.Admin.Controllers
 
         public IActionResult Index()
         {
-            var couponsFromDb = _db.Coupons.ToList();
-            return View(couponsFromDb);
+            return View();
         }
 
         public IActionResult Create()
@@ -47,45 +46,6 @@ namespace Glowify.Areas.Admin.Controllers
             }
 
             return View(obj);
-        }
-
-        public IActionResult Delete(int? id)
-        {
-            if (id == null || id == 0)
-            {
-                TempData["Error"] = "There is no coupon with this id.";
-                return RedirectToAction(nameof(Index));
-            }
-
-            var couponFromDb = _db.Coupons.FirstOrDefault(u => u.Id == id);
-
-            if (couponFromDb == null)
-            {
-                TempData["Error"] = "There is no coupon with this id.";
-                return RedirectToAction(nameof(Index));
-            }
-
-            return View(couponFromDb);
-        }
-
-        [ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        [HttpPost]
-        public IActionResult DeletePOST(int? id)
-        {
-            var couponFromDb = _db.Coupons.FirstOrDefault(u => u.Id == id);
-
-            if (couponFromDb == null)
-            {
-                TempData["Error"] = "There is no coupon with this id.";
-                return RedirectToAction(nameof(Index));
-            }
-
-            _db.Coupons.Remove(couponFromDb);
-            _db.SaveChanges();
-
-            TempData["Success"] = "Coupon deleted successfully!";
-            return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Edit(int? id)
@@ -127,5 +87,32 @@ namespace Glowify.Areas.Admin.Controllers
 
             return View(obj);
         }
+
+
+        #region API CALLS
+
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            var objList = _db.Coupons.ToList();
+            return Json(new { data = objList });
+        }
+
+        [HttpDelete]
+        public IActionResult Delete(int? id)
+        {
+            var obj = _db.Coupons.FirstOrDefault(u => u.Id == id);
+            if (obj == null)
+            {
+                return Json(new { success = false, message = "Error while deleting" });
+            }
+
+            _db.Coupons.Remove(obj);
+            _db.SaveChanges();
+
+            return Json(new { success = true, message = "Delete Successful" });
+        }
+
+        #endregion
     }
 }
