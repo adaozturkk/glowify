@@ -22,38 +22,11 @@ namespace Glowify.Areas.Admin.Controllers
             return View();
         }
 
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Create(Coupon obj)
-        {
-            if (_db.Coupons.Any(u => u.Code.ToLower() == obj.Code.ToLower()))
-            {
-                ModelState.AddModelError("Code", "Coupon code already exists!");
-            }
-
-            if (ModelState.IsValid)
-            {
-                _db.Coupons.Add(obj);
-                _db.SaveChanges();
-
-                TempData["Success"] = "Coupon created successfully!";
-                return RedirectToAction(nameof(Index));
-            }
-
-            return View(obj);
-        }
-
-        public IActionResult Edit(int? id)
+        public IActionResult Upsert(int? id)
         {
             if (id == null || id == 0)
             {
-                TempData["Error"] = "There is no coupon with this id.";
-                return RedirectToAction(nameof(Index));
+                return View(new Coupon());
             }
 
             var couponFromDb = _db.Coupons.FirstOrDefault(u => u.Id == id);
@@ -69,7 +42,7 @@ namespace Glowify.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Coupon obj)
+        public IActionResult Upsert(Coupon obj)
         {
             if (_db.Coupons.Any(u => u.Code.ToLower() == obj.Code.ToLower() && u.Id != obj.Id))
             {
@@ -78,10 +51,17 @@ namespace Glowify.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
-                _db.Coupons.Update(obj);
+                if (obj.Id == 0)
+                {
+                    _db.Coupons.Add(obj);
+                    TempData["Success"] = "Coupon created successfully!";
+                }
+                else
+                {
+                    _db.Coupons.Update(obj);
+                    TempData["Success"] = "Coupon updated successfully!";
+                }
                 _db.SaveChanges();
-
-                TempData["Success"] = "Coupon updated successfully!";
                 return RedirectToAction(nameof(Index));
             }
 

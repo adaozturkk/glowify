@@ -7,7 +7,7 @@
         <div class="col-10 offset-1">
             <div class="border p-4 mt-4 shadow-sm rounded">
                 <div class="row pb-3">
-                    <h2 class="text-primary">Edit Coupon</h2>
+                    <h2 class="text-primary">@(Model.Id == 0 ? "Create" : "Edit") Coupon</h2>
                     <hr />
                 </div>
 
@@ -42,7 +42,7 @@
 
                 <div class="row mt-4">
                     <div class="col-6 col-md-3">
-                        <button type="submit" class="btn btn-primary form-control">Update</button>
+                        <button type="submit" class="btn btn-primary form-control">@(Model.Id == 0 ? "Create" : "Update")</button>
                     </div>
                     <div class="col-6 col-md-3">
                         <a asp-action="Index" class="btn btn-outline-secondary form-control">Back to List</a>
