@@ -1,4 +1,5 @@
 ﻿using Glowify.Data;
+using Glowify.Data.Repository.IRepository;
 using Glowify.Models;
 using Glowify.Models.ViewModels;
 using Glowify.Utility;
@@ -17,12 +18,12 @@ namespace Glowify.Areas.Admin.Controllers
     [Area("Admin")]
     public class OrderController : Controller
     {
-        private readonly ApplicationDbContext _db;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IEmailSender _emailSender;
 
-        public OrderController(ApplicationDbContext db, IEmailSender emailSender)
+        public OrderController(IUnitOfWork unitOfWork, IEmailSender emailSender)
         {
-            _db = db;
+            _unitOfWork = unitOfWork;
             _emailSender = emailSender;
         }
 
@@ -34,7 +35,7 @@ namespace Glowify.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetAll(string status)
         {
-            IEnumerable<OrderHeader> orderHeaders = _db.OrderHeaders.Include(u => u.ApplicationUser).ToList();
+            IEnumerable<OrderHeader> orderHeaders = _unitOfWork.OrderHeader.GetAll(includeProperties: "ApplicationUser");
 
             switch (status)
             {
@@ -64,8 +65,8 @@ namespace Glowify.Areas.Admin.Controllers
         {
             OrderVM orderVM = new()
             {
-                OrderHeader = _db.OrderHeaders.Include(u => u.ApplicationUser).FirstOrDefault(u => u.Id == orderId),
-                OrderDetail = _db.OrderDetails.Include(o => o.Product).Where(u => u.OrderHeaderId == orderId).ToList()
+                OrderHeader = _unitOfWork.OrderHeader.Get(u => u.Id == orderId, includeProperties: "ApplicationUser"),
+                OrderDetail = _unitOfWork.OrderDetail.GetAll(includeProperties: "Product").Where(u => u.OrderHeaderId == orderId).ToList()
             };
 
             return View(orderVM);
@@ -74,9 +75,9 @@ namespace Glowify.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult StartProcessing(OrderVM orderVM)
         {
-            var orderHeader = _db.OrderHeaders.FirstOrDefault(u => u.Id == orderVM.OrderHeader.Id);
-            orderHeader.OrderStatus = SD.StatusInProcess;
-            _db.SaveChanges();
+            var orderHeader = _unitOfWork.OrderHeader.Get(u => u.Id == orderVM.OrderHeader.Id);
+            _unitOfWork.OrderHeader.UpdateStatus(orderHeader.Id, SD.StatusInProcess);
+            _unitOfWork.Save();
             TempData["Success"] = "Order Status Updated Successfully!";
             return RedirectToAction(nameof(Details), "Order", new { orderId = orderVM.OrderHeader.Id });
         }
@@ -84,22 +85,19 @@ namespace Glowify.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> ShipOrder(OrderVM orderVM)
         {
-            var orderHeader = _db.OrderHeaders.FirstOrDefault(u => u.Id == orderVM.OrderHeader.Id);
+            var orderHeader = _unitOfWork.OrderHeader.Get(u => u.Id == orderVM.OrderHeader.Id, includeProperties: "ApplicationUser");
 
             orderHeader.TrackingNumber = orderVM.OrderHeader.TrackingNumber;
             orderHeader.Carrier = orderVM.OrderHeader.Carrier;
 
-            orderHeader.OrderStatus = SD.StatusShipped;
+            _unitOfWork.OrderHeader.UpdateStatus(orderHeader.Id, SD.StatusShipped);
             orderHeader.ShippingDate = DateTime.Now;
 
-            _db.SaveChanges();
+            _unitOfWork.Save();
 
             try
             {
-                var userId = orderHeader.ApplicationUserId;
-                var user = _db.ApplicationUsers.FirstOrDefault(u => u.Id == userId);
-
-                if (user != null && !string.IsNullOrEmpty(user.Email))
+                if (orderHeader.ApplicationUser != null && !string.IsNullOrEmpty(orderHeader.ApplicationUser.Email))
                 {
                     string subject = $"Your Order is on its way! - Order #{orderHeader.Id}";
 
@@ -116,7 +114,7 @@ namespace Glowify.Areas.Admin.Controllers
                         <br/>
                         <p>Best Regards,<br/>The Glowify Team</p>";
 
-                    await _emailSender.SendEmailAsync(user.Email, subject, body);
+                    await _emailSender.SendEmailAsync(orderHeader.ApplicationUser.Email, subject, body);
                 }
             }
             catch (Exception ex)
@@ -131,7 +129,7 @@ namespace Glowify.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult CancelOrder(OrderVM orderVM)
         {
-            var orderHeader = _db.OrderHeaders.FirstOrDefault(u => u.Id == orderVM.OrderHeader.Id);
+            var orderHeader = _unitOfWork.OrderHeader.Get(u => u.Id == orderVM.OrderHeader.Id);
 
             if (orderHeader.OrderStatus == SD.StatusShipped)
             {
@@ -141,16 +139,14 @@ namespace Glowify.Areas.Admin.Controllers
 
             if (orderHeader.PaymentStatus == SD.PaymentStatusApproved)
             {
-                orderHeader.OrderStatus = SD.StatusCancelled;
-                orderHeader.PaymentStatus = SD.StatusRefunded;
+                _unitOfWork.OrderHeader.UpdateStatus(orderHeader.Id, SD.StatusCancelled, SD.StatusRefunded);
             }
             else
             {
-                orderHeader.OrderStatus = SD.StatusCancelled;
-                orderHeader.PaymentStatus = SD.StatusCancelled;
+                _unitOfWork.OrderHeader.UpdateStatus(orderHeader.Id, SD.StatusCancelled, SD.StatusCancelled);
             }
-            
-            _db.SaveChanges();
+
+            _unitOfWork.Save();
 
             TempData["Success"] = "Order Cancelled Successfully!";
             return RedirectToAction(nameof(Details), "Order", new { orderId = orderVM.OrderHeader.Id });

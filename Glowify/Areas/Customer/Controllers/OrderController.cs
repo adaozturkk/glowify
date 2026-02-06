@@ -1,4 +1,5 @@
 ﻿using Glowify.Data;
+using Glowify.Data.Repository.IRepository;
 using Glowify.Models;
 using Glowify.Models.ViewModels;
 using Glowify.Utility;
@@ -13,11 +14,11 @@ namespace Glowify.Areas.Customer.Controllers
     [Area("Customer")]
     public class OrderController : Controller
     {
-        private readonly ApplicationDbContext _db;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public OrderController(ApplicationDbContext db)
+        public OrderController(IUnitOfWork unitOfWork)
         {
-            _db = db;
+            _unitOfWork = unitOfWork;
         }
 
         public IActionResult Index()
@@ -29,8 +30,8 @@ namespace Glowify.Areas.Customer.Controllers
         {
             OrderVM orderVM = new()
             {
-                OrderHeader = _db.OrderHeaders.Include(u => u.ApplicationUser).FirstOrDefault(u => u.Id == orderId),
-                OrderDetail = _db.OrderDetails.Include(o => o.Product).Where(u => u.OrderHeaderId == orderId).ToList()
+                OrderHeader = _unitOfWork.OrderHeader.Get(u => u.Id == orderId, includeProperties: "ApplicationUser"),
+                OrderDetail = _unitOfWork.OrderDetail.GetAll(includeProperties: "Product").Where(u => u.OrderHeaderId == orderId).ToList()
             };
 
             return View(orderVM);
@@ -39,7 +40,7 @@ namespace Glowify.Areas.Customer.Controllers
         [HttpPost]
         public IActionResult CancelOrder(OrderVM orderVM)
         {
-            var orderHeader = _db.OrderHeaders.FirstOrDefault(u => u.Id == orderVM.OrderHeader.Id);
+            var orderHeader = _unitOfWork.OrderHeader.Get(u => u.Id == orderVM.OrderHeader.Id);
 
             if (orderHeader.OrderStatus == SD.StatusShipped)
             {
@@ -49,16 +50,14 @@ namespace Glowify.Areas.Customer.Controllers
 
             if (orderHeader.PaymentStatus == SD.PaymentStatusApproved)
             {
-                orderHeader.OrderStatus = SD.StatusCancelled;
-                orderHeader.PaymentStatus = SD.StatusRefunded;
+                _unitOfWork.OrderHeader.UpdateStatus(orderHeader.Id, SD.StatusCancelled, SD.StatusRefunded);
             }
             else
             {
-                orderHeader.OrderStatus = SD.StatusCancelled;
-                orderHeader.PaymentStatus = SD.StatusCancelled;
+                _unitOfWork.OrderHeader.UpdateStatus(orderHeader.Id, SD.StatusCancelled, SD.StatusCancelled);
             }
 
-            _db.SaveChanges();
+            _unitOfWork.Save();
 
             TempData["Success"] = "Order Cancelled Successfully!";
             return RedirectToAction(nameof(Details), "Order", new { orderId = orderVM.OrderHeader.Id });
@@ -70,10 +69,10 @@ namespace Glowify.Areas.Customer.Controllers
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
 
-            IEnumerable<OrderHeader> orderHeaders = _db.OrderHeaders
-                .Where(u => u.ApplicationUserId == claim.Value && u.PaymentStatus != SD.PaymentStatusPending)
-                .Include(u => u.ApplicationUser)
-                .ToList();
+            IEnumerable<OrderHeader> orderHeaders = _unitOfWork.OrderHeader.GetAll(
+                u => u.ApplicationUserId == claim.Value && u.PaymentStatus != SD.PaymentStatusPending,
+                includeProperties: "ApplicationUser"
+            );
 
             switch (status)
             {

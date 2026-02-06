@@ -4,6 +4,8 @@
     {
         ICouponRepository Coupon { get; }
         IProductRepository Product { get; }
+        IOrderHeaderRepository OrderHeader { get; }
+        IOrderDetailRepository OrderDetail { get; }
         void Save();
     }
 }
