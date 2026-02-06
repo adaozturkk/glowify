@@ -1,4 +1,5 @@
 ﻿using Glowify.Data;
+using Glowify.Data.Repository.IRepository;
 using Glowify.Models;
 using Glowify.Models.ViewModels;
 using Glowify.Utility;
@@ -14,12 +15,12 @@ namespace Glowify.Areas.Admin.Controllers
     [Area("Admin")]
     public class ProductController : Controller
     {
-        private readonly ApplicationDbContext _db;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ProductController(ApplicationDbContext db, IWebHostEnvironment webHostEnvironment)
+        public ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
         {
-            _db = db;
+            _unitOfWork = unitOfWork;
             _webHostEnvironment = webHostEnvironment;
         }
 
@@ -56,7 +57,7 @@ namespace Glowify.Areas.Admin.Controllers
             }
             else
             {
-                productVM.Product = _db.Products.FirstOrDefault(u => u.Id == id);
+                productVM.Product = _unitOfWork.Product.Get(u => u.Id == id);
                 return View(productVM);
             }
         }
@@ -92,16 +93,16 @@ namespace Glowify.Areas.Admin.Controllers
 
                 if (obj.Product.Id == 0)
                 {
-                    _db.Products.Add(obj.Product);
+                    _unitOfWork.Product.Add(obj.Product);
                     TempData["success"] = "Product created successfully";
                 }
                 else
                 {
-                    _db.Products.Update(obj.Product);
+                    _unitOfWork.Product.Update(obj.Product);
                     TempData["success"] = "Product updated successfully";
                 }
 
-                _db.SaveChanges();
+                _unitOfWork.Save();
                 return RedirectToAction("Index");
             }
 
@@ -117,7 +118,10 @@ namespace Glowify.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var productList = _db.Products.Select(u => new {
+            var productList = _unitOfWork.Product.GetAll();
+            
+            var data = productList.Select(u => new 
+            {
                 id = u.Id,
                 name = u.Name,
                 listPrice = u.ListPrice,
@@ -134,7 +138,7 @@ namespace Glowify.Areas.Admin.Controllers
         [HttpDelete]
         public IActionResult Delete(int? id)
         {
-            var obj = _db.Products.FirstOrDefault(u => u.Id == id);
+            var obj = _unitOfWork.Product.Get(u => u.Id == id);
             if (obj == null)
             {
                 return Json(new { success = false, message = "Error while deleting" });
@@ -149,9 +153,9 @@ namespace Glowify.Areas.Admin.Controllers
                 }
             }
 
-            _db.Products.Remove(obj);
-            _db.SaveChanges();
-            return Json(new { success = false, message = "Delete Successfull" });
+            _unitOfWork.Product.Remove(obj);
+            _unitOfWork.Save();
+            return Json(new { success = true, message = "Delete Successfull" });
         }
 
         #endregion
