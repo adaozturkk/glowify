@@ -1,4 +1,5 @@
 ﻿using Glowify.Data;
+using Glowify.Data.Repository.IRepository;
 using Glowify.Models;
 using Glowify.Utility;
 using Microsoft.AspNetCore.Authorization;
@@ -10,11 +11,11 @@ namespace Glowify.Areas.Admin.Controllers
     [Area("Admin")]
     public class CouponController : Controller
     {
-        private readonly ApplicationDbContext _db;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CouponController(ApplicationDbContext db)
+        public CouponController(IUnitOfWork unitOfWork)
         {
-            _db = db;
+            _unitOfWork = unitOfWork;
         }
 
         public IActionResult Index()
@@ -29,7 +30,7 @@ namespace Glowify.Areas.Admin.Controllers
                 return View(new Coupon());
             }
 
-            var couponFromDb = _db.Coupons.FirstOrDefault(u => u.Id == id);
+            var couponFromDb = _unitOfWork.Coupon.Get(u => u.Id == id);
 
             if (couponFromDb == null)
             {
@@ -44,7 +45,9 @@ namespace Glowify.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Upsert(Coupon obj)
         {
-            if (_db.Coupons.Any(u => u.Code.ToLower() == obj.Code.ToLower() && u.Id != obj.Id))
+            var existingCoupon = _unitOfWork.Coupon.Get(u => u.Code.ToLower() == obj.Code.ToLower() && u.Id != obj.Id);
+
+            if (existingCoupon != null)
             {
                 ModelState.AddModelError("Code", "Coupon code already exists!");
             }
@@ -53,15 +56,16 @@ namespace Glowify.Areas.Admin.Controllers
             {
                 if (obj.Id == 0)
                 {
-                    _db.Coupons.Add(obj);
+                    _unitOfWork.Coupon.Add(obj);
                     TempData["Success"] = "Coupon created successfully!";
                 }
                 else
                 {
-                    _db.Coupons.Update(obj);
+                    _unitOfWork.Coupon.Update(obj);
                     TempData["Success"] = "Coupon updated successfully!";
                 }
-                _db.SaveChanges();
+
+                _unitOfWork.Save();
                 return RedirectToAction(nameof(Index));
             }
 
@@ -74,21 +78,21 @@ namespace Glowify.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var objList = _db.Coupons.ToList();
+            var objList = _unitOfWork.Coupon.GetAll();
             return Json(new { data = objList });
         }
 
         [HttpDelete]
         public IActionResult Delete(int? id)
         {
-            var obj = _db.Coupons.FirstOrDefault(u => u.Id == id);
+            var obj = _unitOfWork.Coupon.Get(u => u.Id == id);
             if (obj == null)
             {
                 return Json(new { success = false, message = "Error while deleting" });
             }
 
-            _db.Coupons.Remove(obj);
-            _db.SaveChanges();
+            _unitOfWork.Coupon.Remove(obj);
+            _unitOfWork.Save();
 
             return Json(new { success = true, message = "Delete Successful" });
         }

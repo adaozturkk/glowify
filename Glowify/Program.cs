@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Identity;
 using Glowify.Models;
 using Glowify.Utility;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Glowify.Data.Repository.IRepository;
+using Glowify.Data.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +18,7 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
