@@ -28,23 +28,23 @@
         </div>
         <div class="p-2">
             <ul class="list-group list-group-horizontal-sm">
-                <a style="text-decoration:none;" asp-controller="Customer" asp-action="Index" asp-route-status="inprocess">
+                <a style="text-decoration:none;" asp-controller="Order" asp-action="Index" asp-route-status="inprocess">
                     <li class="list-group-item @inprocess">Processing</li>
                 </a>
 
-                <a style="text-decoration:none;" asp-controller="Customer" asp-action="Index" asp-route-status="completed">
+                <a style="text-decoration:none;" asp-controller="Order" asp-action="Index" asp-route-status="completed">
                     <li class="list-group-item @completed">Completed</li>
                 </a>
 
-                <a style="text-decoration:none;" asp-controller="Customer" asp-action="Index" asp-route-status="approved">
+                <a style="text-decoration:none;" asp-controller="Order" asp-action="Index" asp-route-status="approved">
                     <li class="list-group-item @approved">Approved</li>
                 </a>
 
-                <a style="text-decoration:none;" asp-controller="Customer" asp-action="Index" asp-route-status="cancelled">
+                <a style="text-decoration:none;" asp-controller="Order" asp-action="Index" asp-route-status="cancelled">
                     <li class="list-group-item @cancelled">Cancelled</li>
                 </a>
 
-                <a style="text-decoration:none;" asp-controller="Customer" asp-action="Index" asp-route-status="all">
+                <a style="text-decoration:none;" asp-controller="Order" asp-action="Index" asp-route-status="all">
                     <li class="list-group-item @all">All</li>
                 </a>
             </ul>
