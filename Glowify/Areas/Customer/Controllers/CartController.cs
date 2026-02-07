@@ -1,4 +1,5 @@
 ﻿using Glowify.Data;
+using Glowify.Data.Repository.IRepository;
 using Glowify.Models;
 using Glowify.Models.ViewModels;
 using Glowify.Utility;
@@ -19,13 +20,13 @@ namespace Glowify.Areas.Customer.Controllers
     [Area("Customer")]
     public class CartController : Controller
     {
-        private readonly ApplicationDbContext _db;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IOptions<IyzicoPaymentOptions> _iyzicoOptions;
         private readonly IEmailSender _emailSender;
 
-        public CartController(ApplicationDbContext db, IOptions<IyzicoPaymentOptions> iyzicoOptions, IEmailSender emailSender)
+        public CartController(IUnitOfWork unitOfWork, IOptions<IyzicoPaymentOptions> iyzicoOptions, IEmailSender emailSender)
         {
-            _db = db;
+            _unitOfWork = unitOfWork;
             _iyzicoOptions = iyzicoOptions;
             _emailSender = emailSender;
         }
@@ -37,10 +38,7 @@ namespace Glowify.Areas.Customer.Controllers
 
             ShoppingCartVM shoppingCartVM = new()
             {
-                ShoppingCartList = _db.ShoppingCarts
-                    .Include(u => u.Product)
-                    .Where(u => u.ApplicationUserId == userId)
-                    .ToList(),
+                ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId, includeProperties: "Product"),
                 OrderTotal = 0,
                 ShippingCost = 0
             };
@@ -54,7 +52,7 @@ namespace Glowify.Areas.Customer.Controllers
 
             if (!string.IsNullOrEmpty(couponCode))
             {
-                var couponFromDb = _db.Coupons.FirstOrDefault(u => u.Code == couponCode);
+                var couponFromDb = _unitOfWork.Coupon.Get(u => u.Code == couponCode);
 
                 if (couponFromDb != null && couponFromDb.IsActive)
                 {
@@ -81,17 +79,15 @@ namespace Glowify.Areas.Customer.Controllers
 
         public IActionResult Plus(int cartId)
         {
-            var cartFromDb = _db.ShoppingCarts
-                .Include(u => u.Product)
-                .FirstOrDefault(u => u.Id == cartId);
+            var cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.Id == cartId, includeProperties: "Product");
 
             if (cartFromDb != null)
             {
                 if (cartFromDb.Product.Stock > cartFromDb.Count)
                 {
                     cartFromDb.Count += 1;
-                    _db.ShoppingCarts.Update(cartFromDb);
-                    _db.SaveChanges();
+                    _unitOfWork.ShoppingCart.Update(cartFromDb);
+                    _unitOfWork.Save();
                 }
                 else
                 {
@@ -104,21 +100,21 @@ namespace Glowify.Areas.Customer.Controllers
 
         public IActionResult Minus(int cartId)
         {
-            var cartFromDb = _db.ShoppingCarts.FirstOrDefault(u => u.Id == cartId);
+            var cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.Id == cartId);
 
             if (cartFromDb != null)
             {
                 if (cartFromDb.Count <= 1)
                 {
-                    _db.ShoppingCarts.Remove(cartFromDb);
+                    _unitOfWork.ShoppingCart.Remove(cartFromDb);
                 }
                 else
                 {
                     cartFromDb.Count -= 1;
-                    _db.ShoppingCarts.Update(cartFromDb);
+                    _unitOfWork.ShoppingCart.Update(cartFromDb);
                 }
 
-                _db.SaveChanges();
+                _unitOfWork.Save();
             }
 
             return RedirectToAction(nameof(Index));
@@ -126,12 +122,12 @@ namespace Glowify.Areas.Customer.Controllers
 
         public IActionResult Remove(int cartId)
         {
-            var cartFromDb = _db.ShoppingCarts.FirstOrDefault(u => u.Id == cartId);
+            var cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.Id == cartId);
 
             if (cartFromDb != null)
             {
-                _db.ShoppingCarts.Remove(cartFromDb);
-                _db.SaveChanges();
+                _unitOfWork.ShoppingCart.Remove(cartFromDb);
+                _unitOfWork.Save();
             }
 
             return RedirectToAction(nameof(Index));
@@ -144,10 +140,7 @@ namespace Glowify.Areas.Customer.Controllers
 
             ShoppingCartVM shoppingCartVM = new()
             {
-                ShoppingCartList = _db.ShoppingCarts
-                    .Where(u => u.ApplicationUserId == userId)
-                    .Include(u => u.Product)
-                    .ToList(),
+                ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId, includeProperties: "Product"),
                 OrderHeader = new()
             };
 
@@ -157,7 +150,7 @@ namespace Glowify.Areas.Customer.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            var applicationUser = _db.ApplicationUsers.FirstOrDefault(u => u.Id == userId);
+            var applicationUser = _unitOfWork.ApplicationUser.Get(u => u.Id == userId);
 
             shoppingCartVM.OrderHeader.ApplicationUser = applicationUser;
             shoppingCartVM.OrderHeader.Name = applicationUser.Name;
@@ -176,7 +169,7 @@ namespace Glowify.Areas.Customer.Controllers
 
             if (!string.IsNullOrEmpty(couponCode))
             {
-                var couponFromDb = _db.Coupons.FirstOrDefault(u => u.Code == couponCode);
+                var couponFromDb = _unitOfWork.Coupon.Get(u => u.Code == couponCode);
 
                 if (couponFromDb != null && couponFromDb.IsActive)
                 {
@@ -202,10 +195,7 @@ namespace Glowify.Areas.Customer.Controllers
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-            shoppingCartVM.ShoppingCartList = _db.ShoppingCarts
-                .Where(u => u.ApplicationUserId == userId)
-                .Include(u => u.Product)
-                .ToList();
+            shoppingCartVM.ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId, includeProperties: "Product");
 
             shoppingCartVM.OrderHeader.OrderTotal = 0;
             foreach (var cart in shoppingCartVM.ShoppingCartList)
@@ -219,7 +209,7 @@ namespace Glowify.Areas.Customer.Controllers
 
             if (!string.IsNullOrEmpty(couponCode))
             {
-                var couponFromDb = _db.Coupons.FirstOrDefault(u => u.Code == couponCode);
+                var couponFromDb = _unitOfWork.Coupon.Get(u => u.Code == couponCode);
 
                 if (couponFromDb != null && couponFromDb.IsActive)
                 {
@@ -247,11 +237,10 @@ namespace Glowify.Areas.Customer.Controllers
             shoppingCartVM.OrderHeader.OrderDate = DateTime.Now;
             shoppingCartVM.OrderHeader.ApplicationUserId = userId;
 
-            shoppingCartVM.OrderHeader.OrderStatus = SD.StatusPending;
-            shoppingCartVM.OrderHeader.PaymentStatus = SD.PaymentStatusPending;
+            _unitOfWork.OrderHeader.UpdateStatus(shoppingCartVM.OrderHeader.Id, SD.StatusPending, SD.PaymentStatusPending);
 
-            _db.OrderHeaders.Add(shoppingCartVM.OrderHeader);
-            _db.SaveChanges();
+            _unitOfWork.OrderHeader.Add(shoppingCartVM.OrderHeader);
+            _unitOfWork.Save();
 
             foreach (var cart in shoppingCartVM.ShoppingCartList)
             {
@@ -262,12 +251,12 @@ namespace Glowify.Areas.Customer.Controllers
                     Price = cart.Price,
                     Count = cart.Count
                 };
-                _db.OrderDetails.Add(orderDetail);
+                _unitOfWork.OrderDetail.Add(orderDetail);
             }
-            _db.SaveChanges();
+            _unitOfWork.Save();
 
 
-            var applicationUser = _db.ApplicationUsers.FirstOrDefault(u => u.Id == shoppingCartVM.OrderHeader.ApplicationUserId);
+            var applicationUser = _unitOfWork.ApplicationUser.Get(u => u.Id == shoppingCartVM.OrderHeader.ApplicationUserId);
 
             Iyzipay.Options options = new Iyzipay.Options();
             options.ApiKey = _iyzicoOptions.Value.ApiKey;
@@ -357,7 +346,7 @@ namespace Glowify.Areas.Customer.Controllers
             request.Token = token;
             CheckoutForm checkoutForm = await CheckoutForm.Retrieve(request, options);
 
-            var orderHeader = _db.OrderHeaders.FirstOrDefault(u => u.Id == orderId);
+            var orderHeader = _unitOfWork.OrderHeader.Get(u => u.Id == orderId);
 
             if (checkoutForm.Status == "success" && checkoutForm.PaymentStatus == "SUCCESS")
             {
@@ -367,24 +356,23 @@ namespace Glowify.Areas.Customer.Controllers
                     orderHeader.PaymentStatus = SD.PaymentStatusApproved;
                     orderHeader.PaymentDate = DateTime.Now;
 
-                    var orderDetails = _db.OrderDetails.Where(u => u.OrderHeaderId == orderHeader.Id).ToList();
+                    var orderDetails = _unitOfWork.OrderDetail.GetAll(u => u.OrderHeaderId == orderHeader.Id);
 
                     foreach (var detail in orderDetails)
                     {
-                        var product = _db.Products.FirstOrDefault(u => u.Id == detail.ProductId);
+                        var product = _unitOfWork.Product.Get(u => u.Id == detail.ProductId);
 
                         if (product != null)
                         {
                             product.Stock -= detail.Count;
                         }
                     }
-
-                    _db.SaveChanges();
+                    _unitOfWork.Save();
 
                     try
                     {
                         var userId = orderHeader.ApplicationUserId;
-                        var user = _db.ApplicationUsers.FirstOrDefault(u => u.Id == userId);
+                        var user = _unitOfWork.ApplicationUser.Get(u => u.Id == userId);
 
                         if (user != null && !string.IsNullOrEmpty(user.Email))
                         {
@@ -408,12 +396,10 @@ namespace Glowify.Areas.Customer.Controllers
                     }
                 }
 
-                List<ShoppingCart> shoppingCarts = _db.ShoppingCarts
-                    .Where(u => u.ApplicationUserId == orderHeader.ApplicationUserId)
-                    .ToList();
+                var shoppingCarts = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == orderHeader.ApplicationUserId);
 
-                _db.ShoppingCarts.RemoveRange(shoppingCarts);
-                _db.SaveChanges();
+                _unitOfWork.ShoppingCart.RemoveRange(shoppingCarts);
+                _unitOfWork.Save();
 
                 HttpContext.Session.Remove("CouponCode");
 
@@ -426,7 +412,7 @@ namespace Glowify.Areas.Customer.Controllers
                     orderHeader.OrderStatus = SD.StatusCancelled;
                     orderHeader.PaymentStatus = SD.PaymentStatusRejected;
 
-                    _db.SaveChanges();
+                    _unitOfWork.Save();
                 }
 
                 TempData["Error"] = "Payment Failed: " + checkoutForm.ErrorMessage;
@@ -451,7 +437,7 @@ namespace Glowify.Areas.Customer.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            var couponFromDb = _db.Coupons.FirstOrDefault(u => u.Code.ToLower() == couponCode.ToLower());
+            var couponFromDb = _unitOfWork.Coupon.Get(u => u.Code.ToLower() == couponCode.ToLower());
 
             if (couponFromDb == null)
             {
@@ -468,10 +454,7 @@ namespace Glowify.Areas.Customer.Controllers
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-            var shoppingCarts = _db.ShoppingCarts
-                .Include(u => u.Product)
-                .Where(u => u.ApplicationUserId == userId)
-                .ToList();
+            var shoppingCarts = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId, includeProperties: "Product");
 
             double cartTotal = 0;
             foreach (var cart in shoppingCarts)

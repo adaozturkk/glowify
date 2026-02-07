@@ -6,10 +6,12 @@ namespace Glowify.Data.Repository
     public class UnitOfWork : IUnitOfWork
     {
         private readonly ApplicationDbContext _db;
-        public ICouponRepository Coupon {  get; set; }
-        public IProductRepository Product { get; set; }
-        public IOrderHeaderRepository OrderHeader { get; set; }
-        public IOrderDetailRepository OrderDetail { get; set; }
+        public ICouponRepository Coupon {  get; private set; }
+        public IProductRepository Product { get; private set; }
+        public IOrderHeaderRepository OrderHeader { get; private set; }
+        public IOrderDetailRepository OrderDetail { get; private set; }
+        public IShoppingCartRepository ShoppingCart { get; private set; }
+        public IRepository<ApplicationUser> ApplicationUser { get; private set; }
 
         public UnitOfWork(ApplicationDbContext db) 
         { 
@@ -18,6 +20,8 @@ namespace Glowify.Data.Repository
             Product = new ProductRepository(_db);
             OrderHeader = new OrderHeaderRepository(_db);
             OrderDetail = new OrderDetailRepository(_db);
+            ShoppingCart = new ShoppingCartRepository(_db);
+            ApplicationUser = new Repository<ApplicationUser>(_db);
         }
 
         public void Save()
