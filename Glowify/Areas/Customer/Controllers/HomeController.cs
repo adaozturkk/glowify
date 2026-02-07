@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Glowify.Data;
+using Glowify.Data.Repository.IRepository;
 using Glowify.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,23 +11,23 @@ namespace Glowify.Areas.Customer.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly ApplicationDbContext _db;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext db)
+        public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork)
         {
             _logger = logger;
-            _db = db;
+            _unitOfWork = unitOfWork;
         }
 
         public IActionResult Index()
         {
-            IEnumerable<Product> products = _db.Products.ToList();
+            var products = _unitOfWork.Product.GetAll();
             return View(products);
         }
 
         public IActionResult Details(int productId)
         {
-            Product product = _db.Products.FirstOrDefault(u => u.Id == productId);
+            Product product = _unitOfWork.Product.Get(u => u.Id == productId);
 
             ShoppingCart cart = new()
             {
@@ -47,9 +48,8 @@ namespace Glowify.Areas.Customer.Controllers
 
             shoppingCart.ApplicationUserId = userId;
 
-            Product productFromDb = _db.Products.FirstOrDefault(u => u.Id == shoppingCart.ProductId);
-            ShoppingCart cartFromDb = _db.ShoppingCarts.FirstOrDefault(
-                u => u.ApplicationUserId == userId && u.ProductId == shoppingCart.ProductId);
+            Product productFromDb = _unitOfWork.Product.Get(u => u.Id == shoppingCart.ProductId);
+            ShoppingCart cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.ApplicationUserId == userId && u.ProductId == shoppingCart.ProductId);
 
             int currentCountInCart = cartFromDb != null ? cartFromDb.Count : 0;
             int totalRequested = currentCountInCart + shoppingCart.Count;
@@ -63,14 +63,14 @@ namespace Glowify.Areas.Customer.Controllers
             if (cartFromDb != null)
             {
                 cartFromDb.Count += shoppingCart.Count;
-                _db.ShoppingCarts.Update(cartFromDb);
+                _unitOfWork.ShoppingCart.Update(cartFromDb);
             }
             else
             {
-                _db.ShoppingCarts.Add(shoppingCart);
+                _unitOfWork.ShoppingCart.Add(shoppingCart);
             }
 
-            _db.SaveChanges();
+            _unitOfWork.Save();
 
             TempData["success"] = "Added to Cart successfully!";
             return RedirectToAction(nameof(Index));
