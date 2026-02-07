@@ -88,6 +88,9 @@ namespace Glowify.Areas.Customer.Controllers
                     cartFromDb.Count += 1;
                     _unitOfWork.ShoppingCart.Update(cartFromDb);
                     _unitOfWork.Save();
+
+                    var count = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == cartFromDb.ApplicationUserId).Sum(u => u.Count);
+                    HttpContext.Session.SetInt32(SD.SessionCart, count);
                 }
                 else
                 {
@@ -115,6 +118,9 @@ namespace Glowify.Areas.Customer.Controllers
                 }
 
                 _unitOfWork.Save();
+
+                var count = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == cartFromDb.ApplicationUserId).Sum(u => u.Count);
+                HttpContext.Session.SetInt32(SD.SessionCart, count);
             }
 
             return RedirectToAction(nameof(Index));
@@ -128,6 +134,9 @@ namespace Glowify.Areas.Customer.Controllers
             {
                 _unitOfWork.ShoppingCart.Remove(cartFromDb);
                 _unitOfWork.Save();
+
+                var count = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == cartFromDb.ApplicationUserId).Sum(u => u.Count);
+                HttpContext.Session.SetInt32(SD.SessionCart, count);
             }
 
             return RedirectToAction(nameof(Index));

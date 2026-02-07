@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Glowify.Data;
 using Glowify.Data.Repository.IRepository;
 using Glowify.Models;
+using Glowify.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -71,6 +72,9 @@ namespace Glowify.Areas.Customer.Controllers
             }
 
             _unitOfWork.Save();
+
+            var count = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId).Count();
+            HttpContext.Session.SetInt32(SD.SessionCart, count);
 
             TempData["success"] = "Added to Cart successfully!";
             return RedirectToAction(nameof(Index));
