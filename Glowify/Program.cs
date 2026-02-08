@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Glowify.Data.Repository.IRepository;
 using Glowify.Data.Repository;
 using Glowify.Data.DbInitializer;
+using Glowify.DataAccess.DbInitializer;
 
 var builder = WebApplication.CreateBuilder(args);
 
