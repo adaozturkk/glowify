@@ -6,6 +6,7 @@ using Glowify.Utility;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Glowify.Data.Repository.IRepository;
 using Glowify.Data.Repository;
+using Glowify.Data.DbInitializer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +39,8 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 
+builder.Services.AddScoped<IDbInitializer, DbInitializer>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -55,6 +58,8 @@ app.UseSession();
 
 app.UseAuthorization();
 
+SeedDatabase();
+
 app.MapStaticAssets();
 
 app.MapControllerRoute(
@@ -65,3 +70,13 @@ app.MapControllerRoute(
 app.MapRazorPages();
 
 app.Run();
+
+
+void SeedDatabase()
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+        dbInitializer.Initialize();
+    }
+}
