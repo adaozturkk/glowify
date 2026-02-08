@@ -30,10 +30,21 @@
                             <p class="text-secondary lh-sm">@Model.Product.Description</p>
                         </div>
 
-                        <div class="row ps-2">
-                            <h6 class="text-dark text-opacity-50 ">Main Ingredient:</h6>
-                            <p class="text-secondary">@Model.Product.MainIngredient</p>
-                        </div>
+                        @if (!string.IsNullOrEmpty(Model.Product.MainIngredient))
+                        {
+                            <div class="row ps-2">
+                                <h6 class="text-dark text-opacity-50 ">Main Ingredient:</h6>
+                                <p class="text-secondary">@Model.Product.MainIngredient</p>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(Model.Product.IngredientsList))
+                        {
+                            <div class="row ps-2">
+                                <h6 class="text-dark text-opacity-50 ">Full Ingredients List:</h6>
+                                <p class="text-secondary">@Model.Product.IngredientsList</p>
+                            </div>
+                        }
 
                         <div class="row pl-2 my-3">
                             <h4 class="text-success font-weight-bold">

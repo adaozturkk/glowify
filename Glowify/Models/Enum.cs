@@ -1,4 +1,6 @@
-﻿namespace Glowify.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Glowify.Models
 {
     public enum SkinType
     {
@@ -16,6 +18,8 @@
         Moisturizer = 2,
         Serum = 3,
         Sunscreen = 4,
-        Toner = 5
+        Toner = 5,
+        Mask = 6,
+        Eye = 7
     }
 }

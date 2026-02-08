@@ -39,6 +39,9 @@ namespace Glowify.Models
         [Display(Name = "Key Ingredient")]
         public string? MainIngredient { get; set; }
 
+        [Display(Name = "Ingredients List")]
+        public string? IngredientsList { get; set; }
+
         [NotMapped]
         public IFormFile? ImageFile { get; set; }
 
