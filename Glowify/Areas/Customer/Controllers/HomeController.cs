@@ -20,10 +20,22 @@ namespace Glowify.Areas.Customer.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string? search, string? category)
         {
-            var products = _unitOfWork.Product.GetAll();
-            return View(products);
+            var productList = _unitOfWork.Product.GetAll();
+
+            if (!string.IsNullOrEmpty(category) && category != "All")
+            {
+                productList = productList.Where(u => u.Category.ToString() == category);
+            }
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                productList = productList.Where(u => u.Name.ToLower().Contains(search.ToLower())
+                    || u.Description.ToLower().Contains(search.ToLower()));
+            }
+
+            return View(productList);
         }
 
         public IActionResult Details(int productId)

@@ -1,74 +1,180 @@
 ﻿@model IEnumerable<Glowify.Models.Product>
 
-<div class="container pb-3">
-	<div class="row">
-		@foreach (var product in Model)
-		{
-			<div class="col-lg-3 col-md-6">
-				<div class="row p-2">
-					<div class="col-12 p-1" style="border:1px solid #008cba; border-radius: 5px;">
-						<div class="card border-0">
-							<div style="position: relative;">
-								@if (product.ImageUrl != null)
-								{
-									<img src="@product.ImageUrl" class="card-img-top rounded" style="height: 250px; object-fit: cover;" />
-								}
-								else
-								{
-									<img src="https://via.placeholder.com/300x300?text=No+Image" class="card-img-top rounded" style="height: 250px; object-fit: cover;" />
-								}
+@{
+    var activeCategory = Context.Request.Query["category"].ToString();
+    if (string.IsNullOrEmpty(activeCategory))
+    {
+        activeCategory = "All";
+    }
+}
 
-								@if (product.Stock <= 0)
-								{
-									<div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0, 0.6); display: flex; justify-content: center; align-items: center; border-radius: 5px;">
-										<div style="text-align:center;">
-											<span style="color: white; font-weight: bold; font-size: 18px; border: 2px solid white; padding: 10px 20px; text-transform: uppercase; letter-spacing: 2px;">
-												SOLD OUT
-											</span>
-										</div>
+<div class="container mt-4">
 
-									</div>
-								}
-							</div>
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
 
-							<div class="card-body pb-0 pl-1 pr-1">
-								<div class="pl-1">
-									<p class="card-title h5 text-dark opacity-75 text-uppercase text-center">@product.Name</p>
-									<p class="card-title text-warning text-center">by <b>Glowify</b></p>
-								</div>
-								<div class="pl-1 text-center">
-									@if (product.ListPrice > product.Price)
-									{
-										<p class="mb-0">
-											<span class="text-decoration-line-through text-muted">
-												@product.ListPrice.ToString("c")
-											</span>
-											<span class="fw-bold text-danger ms-2">
-												@product.Price.ToString("c")
-											</span>
-										</p>
-									}
-									else
-									{
-										<p class="mb-0">
-											<span class="fw-bold text-primary">
-												@product.Price.ToString("c")
-											</span>
-										</p>
-									}
-								</div>
-							</div>
+        <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-outline-dark d-flex align-items-center gap-2 px-4 py-2 rounded-pill shadow-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterSidebar" aria-controls="filterSidebar">
+                <i class="bi bi-sliders2"></i> Filters
+            </button>
 
-							<div>
-								<a asp-action="Details" asp-route-productId="@product.Id" class="btn btn-primary bg-gradient border-0 form-control mt-2">
-									Details
-								</a>
-							</div>
+            @if (activeCategory != "All")
+            {
+                <span class="badge bg-secondary rounded-pill px-3 py-2 shadow-sm">
+                    Category: @activeCategory
+                    <a asp-action="Index" class="text-white ms-2 text-decoration-none"><i class="bi bi-x-circle-fill"></i></a>
+                </span>
+            }
+        </div>
 
-						</div>
-					</div>
-				</div>
-			</div>
-		}
-	</div>
+        <form asp-action="Index" method="get" class="d-flex shadow-sm rounded-pill" style="max-width: 400px; width: 100%;">
+            @if (activeCategory != "All")
+            {
+                <input type="hidden" name="category" value="@activeCategory" />
+            }
+            <div class="input-group">
+                <span class="input-group-text bg-white border-end-0 rounded-start-pill ps-3 border-0">
+                    <i class="bi bi-search text-muted"></i>
+                </span>
+                <input type="text" name="search" class="form-control border-start-0 rounded-end-pill ps-0 border-0"
+                       placeholder="Search products..."
+                       value="@Context.Request.Query["search"]" style="box-shadow: none; background-color: white;">
+            </div>
+        </form>
+    </div>
+
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="filterSidebar" aria-labelledby="filterSidebarLabel">
+        <div class="offcanvas-header border-bottom">
+            <h5 class="offcanvas-title fw-bold text-uppercase" id="filterSidebarLabel">Filter Products</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <h6 class="text-muted text-uppercase small fw-bold mb-3">Categories</h6>
+
+            <div class="list-group list-group-flush">
+                <a asp-action="Index" asp-route-category="All"
+                   class="list-group-item list-group-item-action border-0 px-3 rounded mb-1 @(activeCategory == "All" ? "active bg-primary text-white" : "text-dark")">
+                    All Products
+                </a>
+
+                <a asp-action="Index" asp-route-category="Cleanser"
+                   class="list-group-item list-group-item-action border-0 px-3 rounded mb-1 @(activeCategory == "Cleanser" ? "active bg-primary text-white" : "text-dark")">
+                    Cleanser
+                </a>
+
+                <a asp-action="Index" asp-route-category="Moisturizer"
+                   class="list-group-item list-group-item-action border-0 px-3 rounded mb-1 @(activeCategory == "Moisturizer" ? "active bg-primary text-white" : "text-dark")">
+                    Moisturizer
+                </a>
+
+                <a asp-action="Index" asp-route-category="Serum"
+                   class="list-group-item list-group-item-action border-0 px-3 rounded mb-1 @(activeCategory == "Serum" ? "active bg-primary text-white" : "text-dark")">
+                    Serum
+                </a>
+
+                <a asp-action="Index" asp-route-category="Sunscreen"
+                   class="list-group-item list-group-item-action border-0 px-3 rounded mb-1 @(activeCategory == "Sunscreen" ? "active bg-primary text-white" : "text-dark")">
+                    Sunscreen
+                </a>
+
+                <a asp-action="Index" asp-route-category="Toner"
+                   class="list-group-item list-group-item-action border-0 px-3 rounded mb-1 @(activeCategory == "Toner" ? "active bg-primary text-white" : "text-dark")">
+                    Toner
+                </a>
+
+                <a asp-action="Index" asp-route-category="Mask"
+                   class="list-group-item list-group-item-action border-0 px-3 rounded mb-1 @(activeCategory == "Mask" ? "active bg-primary text-white" : "text-dark")">
+                    Mask
+                </a>
+
+                <a asp-action="Index" asp-route-category="Eye"
+                   class="list-group-item list-group-item-action border-0 px-3 rounded mb-1 @(activeCategory == "Eye" ? "active bg-primary text-white" : "text-dark")">
+                    Eye Care
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row pb-3">
+        @if (Model.Any())
+        {
+            @foreach (var product in Model)
+            {
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="card border-0 shadow-sm h-100 product-card" style="border-radius: 15px; overflow: hidden;">
+
+                        <div style="position: relative;">
+                            <a asp-action="Details" asp-route-productId="@product.Id">
+                                <img src="@(string.IsNullOrEmpty(product.ImageUrl) ? "https://via.placeholder.com/300x300?text=No+Image" : product.ImageUrl)"
+                                     class="card-img-top"
+                                     style="height: 300px; object-fit: cover;" />
+                            </a>
+
+                            @if (product.Stock <= 0)
+                            {
+                                <div class="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center" style="background: rgba(255,255,255,0.7);">
+                                    <span class="badge bg-dark text-uppercase px-3 py-2 shadow">Sold Out</span>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="card-body text-center p-3">
+                            <p class="text-muted small mb-1 text-uppercase fw-bold" style="font-size: 0.75rem;">@product.Category</p>
+                            <h6 class="card-title fw-bold text-dark text-truncate">@product.Name</h6>
+
+                            <div class="mb-3">
+                                @if (product.ListPrice > product.Price)
+                                {
+                                    <span class="text-muted text-decoration-line-through me-2 small">@product.ListPrice.ToString("c")</span>
+                                    <span class="text-danger fw-bold">@product.Price.ToString("c")</span>
+                                }
+                                else
+                                {
+                                    <span class="fw-bold text-dark">@product.Price.ToString("c")</span>
+                                }
+                            </div>
+
+                            <a asp-action="Details" asp-route-productId="@product.Id"
+                               class="btn btn-outline-dark btn-sm rounded-pill px-4 w-100">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center py-5">
+                <div class="mb-3">
+                    <i class="bi bi-emoji-frown" style="font-size: 3rem; color: #ddd;"></i>
+                </div>
+                <h4 class="text-muted">No products found</h4>
+                <p class="text-secondary">Try adjusting your search or filter.</p>
+                <a asp-action="Index" class="btn btn-dark px-4 rounded-pill mt-2">Clear Filters</a>
+            </div>
+        }
+    </div>
 </div>
+
+<style>
+    .product-card {
+        transition: all 0.3s ease;
+    }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+        }
+
+    .list-group-item.active {
+        background-color: #0d6efd !important;
+        border-color: #0d6efd !important;
+        color: white !important;
+        font-weight: 600;
+    }
+
+    .form-control:focus {
+        box-shadow: none;
+    }
+</style>
