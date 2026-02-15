@@ -68,7 +68,7 @@ namespace Glowify.Areas.Customer.Controllers
                 }
             }
 
-            if (shoppingCartVM.OrderTotal < 1000)
+            if (shoppingCartVM.OrderTotal < 1000 && shoppingCartVM.ShoppingCartList.Count() > 0)
             {
                 shoppingCartVM.ShippingCost = 39.99;
                 shoppingCartVM.OrderTotal += shoppingCartVM.ShippingCost;
