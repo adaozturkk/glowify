@@ -12,6 +12,15 @@ using Glowify.DataAccess.DbInitializer;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddControllersWithViews();
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
+
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
@@ -21,13 +30,8 @@ builder.Services.AddSession(options =>
 });
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddControllersWithViews();
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
-    .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.AddScoped<IEmailSender, EmailSender>();
+builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 
 builder.Services.Configure<IyzicoPaymentOptions>(
     builder.Configuration.GetSection(IyzicoPaymentOptions.Iyzico));
@@ -37,10 +41,6 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.SameSite = SameSiteMode.None;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
-
-builder.Services.AddScoped<IEmailSender, EmailSender>();
-
-builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 
 var app = builder.Build();
 
@@ -61,22 +61,24 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseStaticFiles();
+
 app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseSession();
 
-app.UseAuthorization();
-
 SeedDatabase();
 
-app.MapStaticAssets();
+app.MapRazorPages();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
-
-app.MapRazorPages();
 
 app.Run();
 
