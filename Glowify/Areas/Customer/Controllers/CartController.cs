@@ -336,6 +336,13 @@ namespace Glowify.Areas.Customer.Controllers
 
         public IActionResult OrderConfirmation(int id)
         {
+            var orderHeader = _unitOfWork.OrderHeader.Get(u => u.Id == id);
+
+            if (orderHeader != null)
+            {
+                HttpContext.Session.Clear();
+            }
+
             return View(id);
         }
 
@@ -411,8 +418,6 @@ namespace Glowify.Areas.Customer.Controllers
 
                 _unitOfWork.ShoppingCart.RemoveRange(shoppingCarts);
                 _unitOfWork.Save();
-
-                HttpContext.Session.Remove("CouponCode");
 
                 return RedirectToAction(nameof(OrderConfirmation), "Cart", new { id = orderId });
             }

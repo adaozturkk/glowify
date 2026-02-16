@@ -85,7 +85,7 @@ namespace Glowify.Areas.Customer.Controllers
 
             _unitOfWork.Save();
 
-            var count = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId).Count();
+            var count = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId).Sum(u => u.Count);
             HttpContext.Session.SetInt32(SD.SessionCart, count);
 
             TempData["success"] = "Added to Cart successfully!";
