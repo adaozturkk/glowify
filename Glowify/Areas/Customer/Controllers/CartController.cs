@@ -365,6 +365,8 @@ namespace Glowify.Areas.Customer.Controllers
                     orderHeader.PaymentStatus = SD.PaymentStatusApproved;
                     orderHeader.PaymentDate = DateTime.Now;
 
+                    orderHeader.PaymentTransactionId = checkoutForm.PaymentId;
+
                     var orderDetails = _unitOfWork.OrderDetail.GetAll(u => u.OrderHeaderId == orderHeader.Id);
 
                     foreach (var detail in orderDetails)

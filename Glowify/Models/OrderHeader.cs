@@ -39,6 +39,8 @@ namespace Glowify.Models
         public string? TrackingNumber { get; set; }
         public string? Carrier { get; set; }
 
+        public string? PaymentTransactionId { get; set; }
+
         public double ShippingCost { get; set; }
 
         public string? CouponCode { get; set; }

@@ -20,11 +20,13 @@ namespace Glowify.Areas.Admin.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IEmailSender _emailSender;
+        private readonly IOptions<IyzicoPaymentOptions> _iyzicoOptions;
 
-        public OrderController(IUnitOfWork unitOfWork, IEmailSender emailSender)
+        public OrderController(IUnitOfWork unitOfWork, IEmailSender emailSender, IOptions<IyzicoPaymentOptions> iyzicoOptions)
         {
             _unitOfWork = unitOfWork;
             _emailSender = emailSender;
+            _iyzicoOptions = iyzicoOptions;
         }
 
         public IActionResult Index()
@@ -127,7 +129,7 @@ namespace Glowify.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult CancelOrder(OrderVM orderVM)
+        public async Task<IActionResult> CancelOrder(OrderVM orderVM)
         {
             var orderHeader = _unitOfWork.OrderHeader.Get(u => u.Id == orderVM.OrderHeader.Id);
 
@@ -139,16 +141,51 @@ namespace Glowify.Areas.Admin.Controllers
 
             if (orderHeader.PaymentStatus == SD.PaymentStatusApproved)
             {
-                _unitOfWork.OrderHeader.UpdateStatus(orderHeader.Id, SD.StatusCancelled, SD.StatusRefunded);
+                bool isRefunded = await IyzicoPaymentService.RefundOrder(
+                     orderHeader.PaymentTransactionId,
+                     HttpContext.Connection.RemoteIpAddress?.ToString(),
+                     _iyzicoOptions.Value
+                );
+
+                if (isRefunded)
+                {
+                    _unitOfWork.OrderHeader.UpdateStatus(orderHeader.Id, SD.StatusCancelled, SD.StatusRefunded);
+
+                    try
+                    {
+                        var userEmail = _unitOfWork.ApplicationUser.Get(u => u.Id == orderHeader.ApplicationUserId).Email;
+
+                        string subject = $"Order Cancelled - Order #{orderHeader.Id}";
+                        string htmlMessage = $@"
+                            <h3>Your order has been cancelled.</h3>
+                            <p>Dear {orderHeader.Name},</p>
+                            <p>Your order <strong>#{orderHeader.Id}</strong> has been successfully cancelled.</p>
+                            <p>A refund of <strong>{orderHeader.OrderTotal.ToString("c")}</strong> has been initiated to your payment method.</p>
+                            <p>Please note that it may take 1-3 business days for the refund to appear on your bank statement.</p>
+                            <br/>
+                            <p>Best Regards,<br/>Glowify Team</p>";
+
+                        await _emailSender.SendEmailAsync(userEmail, subject, htmlMessage);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("EMAIL ERROR: " + ex.Message);
+                    }
+
+                    TempData["Success"] = "Order Cancelled & Payment Refunded Successfully.";
+                }
+                else
+                {
+                    TempData["Error"] = "Cancel Failed! The bank rejected the refund. Please contact support.";
+                }
             }
             else
             {
                 _unitOfWork.OrderHeader.UpdateStatus(orderHeader.Id, SD.StatusCancelled, SD.StatusCancelled);
+                TempData["Success"] = "Order Cancelled Successfully.";
             }
 
             _unitOfWork.Save();
-
-            TempData["Success"] = "Order Cancelled Successfully!";
             return RedirectToAction(nameof(Details), "Order", new { orderId = orderVM.OrderHeader.Id });
         }
     }
