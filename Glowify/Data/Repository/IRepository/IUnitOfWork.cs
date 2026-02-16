@@ -10,6 +10,7 @@ namespace Glowify.Data.Repository.IRepository
         IOrderDetailRepository OrderDetail { get; }
         IShoppingCartRepository ShoppingCart { get; }
         IRepository<ApplicationUser> ApplicationUser { get; }
+        IProductReviewRepository ProductReview { get; }
         void Save();
     }
 }

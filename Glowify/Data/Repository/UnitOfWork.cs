@@ -12,6 +12,7 @@ namespace Glowify.Data.Repository
         public IOrderDetailRepository OrderDetail { get; private set; }
         public IShoppingCartRepository ShoppingCart { get; private set; }
         public IRepository<ApplicationUser> ApplicationUser { get; private set; }
+        public IProductReviewRepository ProductReview { get; private set; }
 
         public UnitOfWork(ApplicationDbContext db) 
         { 
@@ -22,6 +23,7 @@ namespace Glowify.Data.Repository
             OrderDetail = new OrderDetailRepository(_db);
             ShoppingCart = new ShoppingCartRepository(_db);
             ApplicationUser = new Repository<ApplicationUser>(_db);
+            ProductReview = new ProductReviewRepository(_db);
         }
 
         public void Save()
