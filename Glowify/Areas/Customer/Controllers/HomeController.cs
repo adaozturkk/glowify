@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Glowify.Data;
 using Glowify.Data.Repository.IRepository;
 using Glowify.Models;
+using Glowify.Models.ViewModels;
 using Glowify.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -49,7 +50,40 @@ namespace Glowify.Areas.Customer.Controllers
                 Count = 1
             };
 
-            return View(cart);
+            var reviews = _unitOfWork.ProductReview.GetAll(u => u.ProductId == productId, includeProperties: "ApplicationUser");
+
+            ProductDetailsVM productDetailsVM = new()
+            {
+                ShoppingCart = cart,
+                Reviews = reviews,
+                ProductReview = new ProductReview()
+            };
+
+            if (User.Identity.IsAuthenticated)
+            {
+                var claimsIdentity = (System.Security.Claims.ClaimsIdentity)User.Identity;
+                var userId = claimsIdentity.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value;
+
+                var orderDetailsFromDb = _unitOfWork.OrderDetail.GetAll(u => u.ProductId == productId
+                    && u.OrderHeader.ApplicationUserId == userId
+                    && u.OrderHeader.OrderStatus == SD.StatusShipped,
+                    includeProperties: "OrderHeader");
+
+                if (orderDetailsFromDb.Any())
+                {
+                    productDetailsVM.CanReview = true;
+                }
+                else
+                {
+                    productDetailsVM.CanReview = false;
+                }
+            }
+            else
+            {
+                productDetailsVM.CanReview = false;
+            }
+
+            return View(productDetailsVM);
         }
 
         [HttpPost]
@@ -90,6 +124,30 @@ namespace Glowify.Areas.Customer.Controllers
 
             TempData["success"] = "Added to Cart successfully!";
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public IActionResult AddReview(ProductDetailsVM vm)
+        {
+            var claimsIdentity = (System.Security.Claims.ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value;
+
+            ProductReview productReview = new()
+            {
+                ProductId = vm.ProductReview.ProductId,
+                ApplicationUserId = userId,
+                Rating = vm.ProductReview.Rating,
+                Comment = vm.ProductReview.Comment,
+                ReviewDate = DateTime.Now
+            };
+
+            _unitOfWork.ProductReview.Add(productReview);
+            _unitOfWork.Save();
+
+            TempData["Success"] = "Review added successfully!";
+            return RedirectToAction(nameof(Details), new { productId = vm.ProductReview.ProductId });
         }
 
         public IActionResult Privacy()
