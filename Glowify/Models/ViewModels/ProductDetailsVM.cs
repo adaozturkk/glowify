@@ -6,5 +6,6 @@
         public IEnumerable<ProductReview> Reviews { get; set; }
         public ProductReview ProductReview { get; set; }
         public bool CanReview { get; set; }
+        public bool HasReviewed { get; set; }
     }
 }

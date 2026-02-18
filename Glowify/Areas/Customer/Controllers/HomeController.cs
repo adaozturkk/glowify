@@ -69,14 +69,10 @@ namespace Glowify.Areas.Customer.Controllers
                     && u.OrderHeader.OrderStatus == SD.StatusShipped,
                     includeProperties: "OrderHeader");
 
-                if (orderDetailsFromDb.Any())
-                {
-                    productDetailsVM.CanReview = true;
-                }
-                else
-                {
-                    productDetailsVM.CanReview = false;
-                }
+                productDetailsVM.CanReview = orderDetailsFromDb.Any();
+
+                productDetailsVM.HasReviewed = _unitOfWork.ProductReview.Get(u => u.ProductId == productId 
+                    && u.ApplicationUserId == userId) != null;
             }
             else
             {
@@ -134,19 +130,27 @@ namespace Glowify.Areas.Customer.Controllers
             var claimsIdentity = (System.Security.Claims.ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value;
 
-            ProductReview productReview = new()
+            if (_unitOfWork.ProductReview.Get(u => u.ProductId == vm.ProductReview.ProductId && u.ApplicationUserId == userId) != null)
             {
-                ProductId = vm.ProductReview.ProductId,
-                ApplicationUserId = userId,
-                Rating = vm.ProductReview.Rating,
-                Comment = vm.ProductReview.Comment,
-                ReviewDate = DateTime.Now
-            };
+                TempData["Error"] = "You have already reviewed this product.";
+            }
+            else
+            {
+                ProductReview productReview = new()
+                {
+                    ProductId = vm.ProductReview.ProductId,
+                    ApplicationUserId = userId,
+                    Rating = vm.ProductReview.Rating,
+                    Comment = vm.ProductReview.Comment,
+                    ReviewDate = DateTime.Now
+                };
 
-            _unitOfWork.ProductReview.Add(productReview);
-            _unitOfWork.Save();
+                _unitOfWork.ProductReview.Add(productReview);
+                _unitOfWork.Save();
 
-            TempData["Success"] = "Review added successfully!";
+                TempData["Success"] = "Review added successfully!";
+            }
+
             return RedirectToAction(nameof(Details), new { productId = vm.ProductReview.ProductId });
         }
 
