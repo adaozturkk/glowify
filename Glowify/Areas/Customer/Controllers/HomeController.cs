@@ -56,7 +56,9 @@ namespace Glowify.Areas.Customer.Controllers
             {
                 ShoppingCart = cart,
                 Reviews = reviews,
-                ProductReview = new ProductReview()
+                ProductReview = new ProductReview(),
+                ReviewCount = reviews.Count(),
+                AverageRating = reviews.Count() > 0 ? reviews.Average(u => u.Rating) : 0
             };
 
             if (User.Identity.IsAuthenticated)

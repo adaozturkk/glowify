@@ -39,6 +39,45 @@
                     <h1 class="fw-bold text-dark display-6 mb-1">@Model.ShoppingCart.Product.Name</h1>
                     <p class="text-muted small text-uppercase fw-bold mb-4 ls-2">Glowify Skincare</p>
 
+                    <div class="d-flex align-items-center mb-4">
+                        @if (Model.ReviewCount > 0)
+                        {
+                            <div class="d-flex align-items-center me-4">
+                                <div class="text-warning d-flex align-items-center me-2 fs-6">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        if (i <= Model.AverageRating)
+                                        {
+                                            <i class="bi bi-star-fill"></i>
+                                        }
+                                        else if (Model.AverageRating >= i - 0.5)
+                                        {
+                                            <i class="bi bi-star-half"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-star"></i>
+                                        }
+                                    }
+                                </div>
+                                <span class="fw-bold text-dark fs-5" style="line-height: 1;">@Model.AverageRating.ToString("0.0")</span>
+                            </div>
+
+                            <div class="text-muted small">
+                                <span class="badge bg-light text-secondary border rounded-pill px-3 py-1">
+                                    @Model.ReviewCount Review@(Model.ReviewCount > 1 ? "s" : "")
+                                </span>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-muted small d-flex align-items-center">
+                                <i class="bi bi-star text-secondary opacity-50 fs-5 me-2"></i>
+                                <span>No reviews yet. Be the first!</span>
+                            </div>
+                        }
+                    </div>
+
                     <div class="mb-4">
                         @if (Model.ShoppingCart.Product.ListPrice > Model.ShoppingCart.Product.Price)
                         {

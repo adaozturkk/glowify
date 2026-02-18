@@ -7,5 +7,7 @@
         public ProductReview ProductReview { get; set; }
         public bool CanReview { get; set; }
         public bool HasReviewed { get; set; }
+        public int ReviewCount { get; set; }
+        public double AverageRating { get; set; }
     }
 }
