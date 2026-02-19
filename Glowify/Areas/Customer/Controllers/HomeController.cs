@@ -25,18 +25,34 @@ namespace Glowify.Areas.Customer.Controllers
         {
             var productList = _unitOfWork.Product.GetAll();
 
+            List<HomeProductVM> productVMs = new List<HomeProductVM>();
+
+            foreach (var product in productList)
+            {
+                var reviews = _unitOfWork.ProductReview.GetAll(u => u.ProductId == product.Id);
+
+                var productVM = new HomeProductVM
+                {
+                    Product = product,
+                    AverageRating = reviews.Count() > 0 ? reviews.Average(u => u.Rating) : 0,
+                    ReviewCount = reviews.Count()
+                };
+
+                productVMs.Add(productVM);
+            }
+
             if (!string.IsNullOrEmpty(category) && category != "All")
             {
-                productList = productList.Where(u => u.Category.ToString() == category);
+                productVMs = (List<HomeProductVM>)productVMs.Where(u => u.Product.Category.ToString() == category);
             }
 
             if (!string.IsNullOrEmpty(search))
             {
-                productList = productList.Where(u => u.Name.ToLower().Contains(search.ToLower())
-                    || u.Description.ToLower().Contains(search.ToLower()));
+                productVMs = (List<HomeProductVM>)productVMs.Where(u => u.Product.Name.ToLower().Contains(search.ToLower())
+                    || u.Product.Description.ToLower().Contains(search.ToLower()));
             }
 
-            return View(productList);
+            return View(productVMs);
         }
 
         public IActionResult Details(int productId)
