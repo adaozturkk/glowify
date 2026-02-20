@@ -30,5 +30,8 @@ namespace Glowify.Models
 
         [Required]
         public DateTime ReviewDate { get; set; }
+
+        [Required]
+        public bool IsApproved { get; set; } = false;
     }
 }

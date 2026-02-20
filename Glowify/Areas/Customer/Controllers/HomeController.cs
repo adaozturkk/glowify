@@ -29,7 +29,7 @@ namespace Glowify.Areas.Customer.Controllers
 
             foreach (var product in productList)
             {
-                var reviews = _unitOfWork.ProductReview.GetAll(u => u.ProductId == product.Id);
+                var reviews = _unitOfWork.ProductReview.GetAll(u => u.ProductId == product.Id && u.IsApproved);
 
                 var productVM = new HomeProductVM
                 {
@@ -66,7 +66,7 @@ namespace Glowify.Areas.Customer.Controllers
                 Count = 1
             };
 
-            var reviews = _unitOfWork.ProductReview.GetAll(u => u.ProductId == productId, includeProperties: "ApplicationUser");
+            var reviews = _unitOfWork.ProductReview.GetAll(u => u.ProductId == productId && u.IsApproved, includeProperties: "ApplicationUser");
 
             ProductDetailsVM productDetailsVM = new()
             {
@@ -166,7 +166,7 @@ namespace Glowify.Areas.Customer.Controllers
                 _unitOfWork.ProductReview.Add(productReview);
                 _unitOfWork.Save();
 
-                TempData["Success"] = "Review added successfully!";
+                TempData["Success"] = "Review submitted successfully! It will be visible after admin approval.!";
             }
 
             return RedirectToAction(nameof(Details), new { productId = vm.ProductReview.ProductId });
