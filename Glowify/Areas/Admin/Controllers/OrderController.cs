@@ -47,7 +47,7 @@ namespace Glowify.Areas.Admin.Controllers
                 case "inprocess":
                     orderHeaders = orderHeaders.Where(u => u.OrderStatus == SD.StatusInProcess);
                     break;
-                case "completed":
+                case "shipped":
                     orderHeaders = orderHeaders.Where(u => u.OrderStatus == SD.StatusShipped);
                     break;
                 case "approved":
@@ -55,6 +55,9 @@ namespace Glowify.Areas.Admin.Controllers
                     break;
                 case "cancelled":
                     orderHeaders = orderHeaders.Where(u => u.OrderStatus == SD.StatusCancelled || u.OrderStatus == SD.StatusRefunded || u.PaymentStatus == SD.PaymentStatusRejected);
+                    break;
+                case "completed":
+                    orderHeaders = orderHeaders.Where(u => u.OrderStatus == SD.StatusDelivered);
                     break;
                 default:
                     break;
@@ -133,9 +136,12 @@ namespace Glowify.Areas.Admin.Controllers
         {
             var orderHeader = _unitOfWork.OrderHeader.Get(u => u.Id == orderVM.OrderHeader.Id);
 
-            if (orderHeader.OrderStatus == SD.StatusShipped)
+            if (orderHeader.OrderStatus == SD.StatusRefunded ||
+                orderHeader.OrderStatus == SD.StatusCancelled ||
+                orderHeader.OrderStatus == SD.StatusShipped ||
+                orderHeader.OrderStatus == SD.StatusDelivered)
             {
-                TempData["Error"] = "Shipped orders cannot be cancelled!";
+                TempData["Error"] = "This order cannot be cancelled!";
                 return RedirectToAction(nameof(Details), "Order", new { orderId = orderVM.OrderHeader.Id });
             }
 
@@ -186,6 +192,56 @@ namespace Glowify.Areas.Admin.Controllers
             }
 
             _unitOfWork.Save();
+            return RedirectToAction(nameof(Details), "Order", new { orderId = orderVM.OrderHeader.Id });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeliverOrder(OrderVM orderVM)
+        {
+            var order = _unitOfWork.OrderHeader.Get(u => u.Id == orderVM.OrderHeader.Id, includeProperties: "ApplicationUser");
+
+            if (order != null)
+            {
+                if (order.OrderStatus == SD.StatusShipped)
+                {
+                    _unitOfWork.OrderHeader.UpdateStatus(order.Id, SD.StatusDelivered);
+                    _unitOfWork.Save();
+
+                    try
+                    {
+                        if (order.ApplicationUser != null && !string.IsNullOrEmpty(order.ApplicationUser.Email))
+                        {
+                            string subject = $"Your Order Has Been Delivered! - Order #{order.Id}";
+
+                            string htmlMessage = $@"
+                                <h3>Hi {order.Name},</h3>
+                                <p>Great news! Your order <strong>#{order.Id}</strong> has been successfully delivered.</p>
+                                <hr/>
+                                <p>We hope you love your Glowify products as much as we loved packing them for you.</p>
+                                <br/>
+                                <p>Thank you for choosing us.</p>
+                                <p>Best Regards,<br/>The Glowify Team</p>";
+
+                            await _emailSender.SendEmailAsync(order.ApplicationUser.Email, subject, htmlMessage);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("DELIVERY EMAIL ERROR: " + ex.Message);
+                    }
+
+                    TempData["Success"] = "Order Delivered Successfully!";
+                }
+                else
+                {
+                    TempData["Error"] = "Order must be shipped first.";
+                }
+            }
+            else
+            {
+                TempData["Error"] = "Order does not exist.";
+            }
+
             return RedirectToAction(nameof(Details), "Order", new { orderId = orderVM.OrderHeader.Id });
         }
     }

@@ -124,7 +124,7 @@ namespace Glowify.Areas.Customer.Controllers
                 case "inprocess":
                     orderHeaders = orderHeaders.Where(u => u.OrderStatus == SD.StatusInProcess);
                     break;
-                case "completed":
+                case "shipped":
                     orderHeaders = orderHeaders.Where(u => u.OrderStatus == SD.StatusShipped);
                     break;
                 case "approved":
@@ -132,6 +132,9 @@ namespace Glowify.Areas.Customer.Controllers
                     break;
                 case "cancelled":
                     orderHeaders = orderHeaders.Where(u => u.OrderStatus == SD.StatusCancelled || u.OrderStatus == SD.StatusRefunded || u.PaymentStatus == SD.PaymentStatusRejected);
+                    break;
+                case "completed":
+                    orderHeaders = orderHeaders.Where(u => u.OrderStatus == SD.StatusDelivered);
                     break;
                 default:
                     break;

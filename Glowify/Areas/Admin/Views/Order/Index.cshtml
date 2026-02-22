@@ -6,6 +6,7 @@
     var all = "text-primary";
     var pending = "text-primary";
     var inprocess = "text-primary";
+    var shipped = "text-primary";
     var completed = "text-primary";
     var approved = "text-primary";
     var cancelled = "text-primary";
@@ -14,6 +15,7 @@
     {
         case "pending": pending = "active text-white bg-primary"; break;
         case "inprocess": inprocess = "active text-white bg-primary"; break;
+        case "shipped": shipped = "active text-white bg-primary"; break;
         case "completed": completed = "active text-white bg-primary"; break;
         case "approved": approved = "active text-white bg-primary"; break;
         case "cancelled": cancelled = "active text-white bg-primary"; break;
@@ -36,8 +38,8 @@
                     <li class="list-group-item @pending">Payment Pending</li>
                 </a>
 
-                <a style="text-decoration:none;" asp-controller="Order" asp-action="Index" asp-route-status="completed">
-                    <li class="list-group-item @completed">Completed</li>
+                <a style="text-decoration:none;" asp-controller="Order" asp-action="Index" asp-route-status="shipped">
+                    <li class="list-group-item @shipped">Shipped</li>
                 </a>
 
                 <a style="text-decoration:none;" asp-controller="Order" asp-action="Index" asp-route-status="approved">
@@ -46,6 +48,10 @@
 
                 <a style="text-decoration:none;" asp-controller="Order" asp-action="Index" asp-route-status="cancelled">
                     <li class="list-group-item @cancelled">Cancelled</li>
+                </a>
+
+                <a style="text-decoration:none;" asp-controller="Order" asp-action="Index" asp-route-status="completed">
+                    <li class="list-group-item @completed">Completed</li>
                 </a>
 
                 <a style="text-decoration:none;" asp-controller="Order" asp-action="Index" asp-route-status="all">

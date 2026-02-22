@@ -84,7 +84,7 @@ namespace Glowify.Areas.Customer.Controllers
 
                 var orderDetailsFromDb = _unitOfWork.OrderDetail.GetAll(u => u.ProductId == productId
                     && u.OrderHeader.ApplicationUserId == userId
-                    && u.OrderHeader.OrderStatus == SD.StatusShipped,
+                    && u.OrderHeader.OrderStatus == SD.StatusDelivered,
                     includeProperties: "OrderHeader");
 
                 productDetailsVM.CanReview = orderDetailsFromDb.Any();

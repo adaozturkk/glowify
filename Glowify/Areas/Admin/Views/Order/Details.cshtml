@@ -134,9 +134,15 @@
 
                             @if (Model.OrderHeader.OrderStatus != SD.StatusRefunded &&
                                  Model.OrderHeader.OrderStatus != SD.StatusCancelled &&
-                                 Model.OrderHeader.OrderStatus != SD.StatusShipped)
+                                 Model.OrderHeader.OrderStatus != SD.StatusShipped &&
+                                 Model.OrderHeader.OrderStatus != SD.StatusDelivered)
                             {
                                 <button type="submit" asp-action="CancelOrder" class="btn btn-danger form-control my-1">Cancel Order</button>
+                            }
+
+                            @if (Model.OrderHeader.OrderStatus == SD.StatusShipped)
+                            {
+                                <button type="submit" asp-action="DeliverOrder" class="btn btn-primary form-control my-1">Deliver Order</button>
                             }
                         </div>
                     </div>
