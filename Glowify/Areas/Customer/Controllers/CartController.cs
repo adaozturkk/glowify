@@ -246,7 +246,8 @@ namespace Glowify.Areas.Customer.Controllers
             shoppingCartVM.OrderHeader.OrderDate = DateTime.Now;
             shoppingCartVM.OrderHeader.ApplicationUserId = userId;
 
-            _unitOfWork.OrderHeader.UpdateStatus(shoppingCartVM.OrderHeader.Id, SD.StatusPending, SD.PaymentStatusPending);
+            shoppingCartVM.OrderHeader.OrderStatus = SD.StatusPending;
+            shoppingCartVM.OrderHeader.PaymentStatus = SD.PaymentStatusPending;
 
             _unitOfWork.OrderHeader.Add(shoppingCartVM.OrderHeader);
             _unitOfWork.Save();
