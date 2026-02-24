@@ -1,0 +1,48 @@
+﻿@model Glowify.Models.ViewModels.DashboardVM
+
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-12">
+            <h2 class="text-primary">Admin Dashboard</h2>
+            <hr />
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card bg-info text-white shadow">
+                <div class="card-body text-center">
+                    <h5 class="card-title"><i class="bi bi-people-fill"></i> Total Users</h5>
+                    <h2 class="display-5 fw-bold">@Model.TotalUsers</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card bg-success text-white shadow">
+                <div class="card-body text-center">
+                    <h5 class="card-title"><i class="bi bi-box-seam"></i> Total Orders</h5>
+                    <h2 class="display-5 fw-bold">@Model.TotalOrders</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card bg-warning text-dark shadow">
+                <div class="card-body text-center">
+                    <h5 class="card-title"><i class="bi bi-hourglass-split"></i> Pending Orders</h5>
+                    <h2 class="display-5 fw-bold">@Model.PendingOrders</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card bg-primary text-white shadow">
+                <div class="card-body text-center">
+                    <h5 class="card-title"><i class="bi bi-currency-dollar"></i> Total Revenue</h5>
+                    <h2 class="display-5 fw-bold">@Model.TotalRevenue.ToString("c")</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
