@@ -28,33 +28,30 @@
                             <a class="nav-link text-dark" asp-area="Customer" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
 
-                        @if (User.IsInRole(SD.Role_Admin))
+                        @if (User.IsInRole(SD.Role_Admin) || User.IsInRole(SD.Role_Employee))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
-                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Management Panel
+                                </a>
+                                <ul class="dropdown-menu">
+                                    @if (User.IsInRole(SD.Role_Admin))
+                                    {
+                                        <li><a class="dropdown-item" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+                                        <li><a class="dropdown-item" asp-area="Admin" asp-controller="Coupon" asp-action="Index">Coupons</a></li>
+                                        <li><hr class="dropdown-divider"></li> }
 
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="Product" asp-action="Index">Products</a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="ProductReview" asp-action="Index">Reviews</a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="Coupon" asp-action="Index">Coupons</a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="Order" asp-action="Index">Orders</a>
+                                    <li><a class="dropdown-item" asp-area="Admin" asp-controller="Product" asp-action="Index">Products</a></li>
+                                    <li><a class="dropdown-item" asp-area="Admin" asp-controller="ProductReview" asp-action="Index">Reviews</a></li>
+                                    <li><a class="dropdown-item" asp-area="Admin" asp-controller="Order" asp-action="Index">Orders</a></li>
+                                </ul>
                             </li>
                         }
 
                         @if (User.IsInRole(SD.Role_Customer))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Customer" asp-controller="Order" asp-action="Index">Orders</a>
+                                <a class="nav-link text-dark" asp-area="Customer" asp-controller="Order" asp-action="Index">My Orders</a>
                             </li>
                         }
 

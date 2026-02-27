@@ -37,13 +37,13 @@ namespace Glowify.DataAccess.DbInitializer
                 Console.WriteLine(ex.Message);
             }
 
-
             if (_roleManager.RoleExistsAsync(SD.Role_Admin).GetAwaiter().GetResult())
             {
                 return;
             }
 
             _roleManager.CreateAsync(new IdentityRole(SD.Role_Admin)).GetAwaiter().GetResult();
+            _roleManager.CreateAsync(new IdentityRole(SD.Role_Employee)).GetAwaiter().GetResult();
             _roleManager.CreateAsync(new IdentityRole(SD.Role_Customer)).GetAwaiter().GetResult();
 
             var adminUser = new ApplicationUser
@@ -54,10 +54,22 @@ namespace Glowify.DataAccess.DbInitializer
                 EmailConfirmed = true
             };
 
-            _userManager.CreateAsync(adminUser, "Admin123*").GetAwaiter().GetResult();
+            var employeeUser = new ApplicationUser
+            {
+                UserName = "employee@glowify.com",
+                Email = "employee@glowify.com",
+                Name = "Glowify Staff",
+                EmailConfirmed = true
+            };
 
-            ApplicationUser userFromDb = _db.ApplicationUsers.FirstOrDefault(u => u.Email == "admin@glowify.com");
-            _userManager.AddToRoleAsync(userFromDb, SD.Role_Admin).GetAwaiter().GetResult();
+            _userManager.CreateAsync(adminUser, "Admin123*").GetAwaiter().GetResult();
+            _userManager.CreateAsync(employeeUser, "Employee123*").GetAwaiter().GetResult();
+
+            ApplicationUser adminUserFromDb = _db.ApplicationUsers.FirstOrDefault(u => u.Email == "admin@glowify.com");
+            _userManager.AddToRoleAsync(adminUserFromDb, SD.Role_Admin).GetAwaiter().GetResult();
+
+            ApplicationUser employeeUserFromDb = _db.ApplicationUsers.FirstOrDefault(u => u.Email == "employee@glowify.com");
+            _userManager.AddToRoleAsync(employeeUserFromDb, SD.Role_Employee).GetAwaiter().GetResult();
 
             var products = new List<Product>
             {
