@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Glowify.Models
 {
@@ -12,5 +13,8 @@ namespace Glowify.Models
         public string? City { get; set; }
         public string? State {  get; set; }
         public string? PostalCode { get; set; }
+
+        [NotMapped]
+        public string Role {  get; set; }
     }
 }
