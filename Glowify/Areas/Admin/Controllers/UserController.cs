@@ -23,6 +23,7 @@ namespace Glowify.Areas.Admin.Controllers
         {
             return View();
         }
+        
 
         #region API CALLS
 
@@ -49,6 +50,37 @@ namespace Glowify.Areas.Admin.Controllers
             }
 
             return Json(new { data = userList });
+        }
+
+        [HttpPost]
+        public IActionResult LockUnlock([FromBody] string id)
+        {
+            var user = _db.ApplicationUsers.FirstOrDefault(u => u.Id == id);
+
+            if (user == null)
+            {
+                return Json(new { success = false, message = "Error while Locking/Unlocking" });
+            }
+
+            var roleId = _db.UserRoles.FirstOrDefault(u => u.UserId == user.Id)?.RoleId;
+            var role = _db.Roles.FirstOrDefault(u => u.Id == roleId)?.Name;
+
+            if (role == SD.Role_Admin)
+            {
+                return Json(new { success = false, message = "You can't lock admin account" });
+            }
+
+            if (user.LockoutEnd > DateTime.Now)
+            {
+                user.LockoutEnd = DateTime.Now;
+            }
+            else
+            {
+                user.LockoutEnd = DateTime.Now.AddYears(1000);
+            }
+
+            _db.SaveChanges();
+            return Json(new { success = true, message = "Lock/Unlock successfull" });
         }
 
         #endregion
