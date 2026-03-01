@@ -6,10 +6,12 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Glowify.Data;
 using Glowify.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Build.Framework;
 
 namespace Glowify.Areas.Identity.Pages.Account.Manage
 {
@@ -17,13 +19,16 @@ namespace Glowify.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly ApplicationDbContext _db;
 
         public IndexModel(
             UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager,
+            ApplicationDbContext db)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _db = db;
         }
 
         /// <summary>
@@ -59,6 +64,13 @@ namespace Glowify.Areas.Identity.Pages.Account.Manage
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
+
+            [System.ComponentModel.DataAnnotations.Required]
+            public string Name { get; set; }
+            public string StreetAddress { get; set; }
+            public string City { get; set; }
+            public string State { get; set; }
+            public string PostalCode { get; set; }
         }
 
         private async Task LoadAsync(ApplicationUser user)
@@ -68,9 +80,22 @@ namespace Glowify.Areas.Identity.Pages.Account.Manage
 
             Username = userName;
 
+            var userFromDb = _db.ApplicationUsers.FirstOrDefault(u => u.Id == user.Id);
+
+            var name = userFromDb.Name;
+            var streetAddress = userFromDb.StreetAddress;
+            var city = userFromDb.City;
+            var state = userFromDb.State;
+            var postalCode = userFromDb.PostalCode;
+
             Input = new InputModel
             {
-                PhoneNumber = phoneNumber
+                PhoneNumber = phoneNumber,
+                Name = name,
+                StreetAddress = streetAddress,
+                City = city,
+                State = state,
+                PostalCode = postalCode
             };
         }
 
@@ -110,6 +135,16 @@ namespace Glowify.Areas.Identity.Pages.Account.Manage
                     return RedirectToPage();
                 }
             }
+
+            var appUser = user as ApplicationUser;
+
+            appUser.Name = Input.Name;
+            appUser.StreetAddress = Input.StreetAddress;
+            appUser.City = Input.City;
+            appUser.State = Input.State;
+            appUser.PostalCode = Input.PostalCode;
+
+            await _userManager.UpdateAsync(appUser);
 
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";
