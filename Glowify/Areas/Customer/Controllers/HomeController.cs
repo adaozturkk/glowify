@@ -43,13 +43,13 @@ namespace Glowify.Areas.Customer.Controllers
 
             if (!string.IsNullOrEmpty(category) && category != "All")
             {
-                productVMs = (List<HomeProductVM>)productVMs.Where(u => u.Product.Category.ToString() == category);
+                productVMs = productVMs.Where(u => u.Product.Category.ToString() == category).ToList();
             }
 
             if (!string.IsNullOrEmpty(search))
             {
-                productVMs = (List<HomeProductVM>)productVMs.Where(u => u.Product.Name.ToLower().Contains(search.ToLower())
-                    || u.Product.Description.ToLower().Contains(search.ToLower()));
+                productVMs = productVMs.Where(u => u.Product.Name.ToLower().Contains(search.ToLower())
+                    || u.Product.Description.ToLower().Contains(search.ToLower())).ToList();
             }
 
             return View(productVMs);
