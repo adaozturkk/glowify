@@ -21,7 +21,7 @@ namespace Glowify.Areas.Customer.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        public IActionResult Index(string? search, string? category)
+        public IActionResult Index(string? search, string? category, int pageNumber = 1)
         {
             var productList = _unitOfWork.Product.GetAll();
 
@@ -51,6 +51,18 @@ namespace Glowify.Areas.Customer.Controllers
                 productVMs = productVMs.Where(u => u.Product.Name.ToLower().Contains(search.ToLower())
                     || u.Product.Description.ToLower().Contains(search.ToLower())).ToList();
             }
+
+            int pageSize = 8;
+            int totalItems = productVMs.Count();
+            int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+
+            productVMs = productVMs.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+
+            ViewBag.CurrentPage = pageNumber;
+            ViewBag.TotalPages = totalPages;
+
+            ViewBag.SearchTerm = search;
+            ViewBag.CategoryFilter = category;
 
             return View(productVMs);
         }
