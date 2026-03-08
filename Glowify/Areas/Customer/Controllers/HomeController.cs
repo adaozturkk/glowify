@@ -67,7 +67,7 @@ namespace Glowify.Areas.Customer.Controllers
             return View(productVMs);
         }
 
-        public IActionResult Details(int productId)
+        public IActionResult Details(int productId, int pageNumber = 1)
         {
             Product product = _unitOfWork.Product.Get(u => u.Id == productId);
 
@@ -78,16 +78,32 @@ namespace Glowify.Areas.Customer.Controllers
                 Count = 1
             };
 
-            var reviews = _unitOfWork.ProductReview.GetAll(u => u.ProductId == productId && u.IsApproved, includeProperties: "ApplicationUser");
+            var allReviews = _unitOfWork.ProductReview.GetAll(u => u.ProductId == productId && u.IsApproved, includeProperties: "ApplicationUser");
+
+            int totalReviews = allReviews.Count();
+            double averageRating = totalReviews > 0 ? allReviews.Average(u => u.Rating) : 0;
+
+            int pageSize = 5;
+            int totalPages = (int)Math.Ceiling((double)totalReviews / pageSize);
+
+            var paginatedReviews = allReviews
+                .OrderByDescending(u => u.Id)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
 
             ProductDetailsVM productDetailsVM = new()
             {
                 ShoppingCart = cart,
-                Reviews = reviews,
+                Reviews = paginatedReviews,
                 ProductReview = new ProductReview(),
-                ReviewCount = reviews.Count(),
-                AverageRating = reviews.Count() > 0 ? reviews.Average(u => u.Rating) : 0
+                ReviewCount = totalReviews,
+                AverageRating = averageRating
             };
+
+            ViewBag.CurrentPage = pageNumber;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.ProductId = productId;
 
             if (User.Identity.IsAuthenticated)
             {
