@@ -3,18 +3,18 @@ using Glowify.Models;
 
 namespace Glowify.Data.Repository
 {
-    public class ProductRepository : Repository<Product>, IProductRepository
+    public class WishlistRepository : Repository<Wishlist>, IWishlistRepository
     {
         private readonly ApplicationDbContext _db;
 
-        public ProductRepository(ApplicationDbContext db) : base(db)
+        public WishlistRepository(ApplicationDbContext db) : base(db)
         {
             _db = db;
         }
 
-        public void Update(Product obj)
+        public void Update(Wishlist obj)
         {
-            _db.Products.Update(obj);
+            _db.Wishlists.Update(obj);
         }
     }
 }

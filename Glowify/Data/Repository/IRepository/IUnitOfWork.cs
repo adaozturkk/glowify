@@ -11,6 +11,7 @@ namespace Glowify.Data.Repository.IRepository
         IShoppingCartRepository ShoppingCart { get; }
         IRepository<ApplicationUser> ApplicationUser { get; }
         IProductReviewRepository ProductReview { get; }
+        IWishlistRepository Wishlist { get; }
         void Save();
     }
 }
