@@ -6,6 +6,7 @@ using System.Security.Claims;
 
 namespace Glowify.Areas.Customer.Controllers
 {
+    [Area("Customer")]
     public class WishlistController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

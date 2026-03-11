@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Glowify.Data;
 using Glowify.Data.Repository.IRepository;
 using Glowify.Models;
@@ -6,6 +5,8 @@ using Glowify.Models.ViewModels;
 using Glowify.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
+using System.Security.Claims;
 
 namespace Glowify.Areas.Customer.Controllers
 {
@@ -63,6 +64,21 @@ namespace Glowify.Areas.Customer.Controllers
 
             ViewBag.SearchTerm = search;
             ViewBag.CategoryFilter = category;
+
+            ViewBag.UserWishlist = new List<int>();
+
+            if (User.Identity.IsAuthenticated)
+            {
+                var claimsIdentity = (ClaimsIdentity)User.Identity;
+                var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+                var userWishlist = _unitOfWork.Wishlist
+                    .GetAll(u => u.ApplicationUserId == userId)
+                    .Select(u => u.ProductId)
+                    .ToList();
+
+                ViewBag.UserWishlist = userWishlist;
+            }
 
             return View(productVMs);
         }

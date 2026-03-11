@@ -110,6 +110,20 @@
 									 style="height: 300px; object-fit: cover;" />
 							</a>
 
+							<button onclick="toggleWishlist(this, @product.Product.Id)"
+									class="btn btn-light position-absolute top-0 end-0 m-2 rounded-circle shadow d-flex justify-content-center align-items-center"
+									style="width: 40px; height: 40px; z-index: 10;">
+
+								@if (ViewBag.UserWishlist != null && ViewBag.UserWishlist.Contains(product.Product.Id))
+								{
+									<i class="bi bi-heart-fill text-danger fs-5" style="transition: all 0.3s;"></i>
+								}
+								else
+								{
+									<i class="bi bi-heart text-secondary fs-5" style="transition: all 0.3s;"></i>
+								}
+							</button>
+
 							@if (product.Product.Stock <= 0)
 							{
 								<div class="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center" style="background: rgba(255,255,255,0.7);">
@@ -253,3 +267,39 @@
 		box-shadow: none;
 	}
 </style>
+
+@section Scripts {
+	<script>
+		function toggleWishlist(button, productId) {
+			$.ajax({
+				type: "POST",
+				url: "/Customer/Wishlist/ToggleWishlist",
+				data: { productId: productId },
+				success: function (data) {
+					if (data.success) {
+						let icon = $(button).find('i');
+
+						if (data.added) {
+							icon.removeClass('bi-heart text-secondary').addClass('bi-heart-fill text-danger');
+
+							icon.css('transform', 'scale(1.2)');
+							setTimeout(() => icon.css('transform', 'scale(1)'), 200);
+
+							toastr.success('Added to your wishlist!');
+						} else {
+							icon.removeClass('bi-heart-fill text-danger').addClass('bi-heart text-secondary');
+							toastr.info('Removed from your wishlist.');
+						}
+					}
+				},
+				error: function (xhr, status, error) {
+					if (xhr.status === 401) {
+						toastr.warning('Please login to add items to your wishlist.');
+					} else {
+						toastr.error('An error occurred while updating wishlist.');
+					}
+				}
+			});
+		}
+	</script>
+}
