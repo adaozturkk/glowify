@@ -16,9 +16,14 @@ namespace Glowify.Areas.Customer.Controllers
             _unitOfWork = unitOfWork;
         }
 
+        [Authorize]
         public IActionResult Index()
         {
-            return View();
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            var wishlists = _unitOfWork.Wishlist.GetAll(u => u.ApplicationUserId == userId, includeProperties: "Product");
+            return View(wishlists);
         }
 
         [HttpPost]
@@ -48,6 +53,19 @@ namespace Glowify.Areas.Customer.Controllers
 
                 return Json(new { success = true, added = true });
             }
+        }
+
+        [Authorize]
+        public IActionResult Remove(int id)
+        {
+            var wishlistItem = _unitOfWork.Wishlist.Get(u => u.Id == id);
+            if (wishlistItem != null)
+            {
+                _unitOfWork.Wishlist.Remove(wishlistItem);
+                _unitOfWork.Save();
+                TempData["success"] = "Item removed from wishlist successfully.";
+            }
+            return RedirectToAction(nameof(Index));
         }
     }
 }

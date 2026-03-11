@@ -1,0 +1,76 @@
+﻿@model IEnumerable<Glowify.Models.Wishlist>
+
+<div class="container mt-5 mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold"><i class="bi bi-heart-fill text-danger me-2"></i> My Wishlist</h2>
+        <a asp-area="Customer" asp-controller="Home" asp-action="Index" class="btn btn-outline-dark rounded-pill">
+            <i class="bi bi-arrow-left"></i> Continue Shopping
+        </a>
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+            @foreach (var item in Model)
+            {
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 product-card">
+                        <div class="position-relative">
+                            <a asp-area="Customer" asp-controller="Home" asp-action="Details" asp-route-productId="@item.ProductId">
+                                <img src="@(string.IsNullOrEmpty(item.Product.ImageUrl) ? "https://placehold.co/300x300/png" : item.Product.ImageUrl)"
+                                     class="card-img-top rounded-top-4"
+                                     style="object-fit: cover; height: 250px;"
+                                     alt="@item.Product.Name">
+                            </a>
+
+                            <a asp-action="Remove" asp-route-id="@item.Id"
+                               class="btn btn-light position-absolute top-0 end-0 m-2 rounded-circle shadow-sm d-flex justify-content-center align-items-center text-danger"
+                               style="width: 35px; height: 35px;" title="Remove from Wishlist">
+                                <i class="bi bi-trash3-fill"></i>
+                            </a>
+                        </div>
+
+                        <div class="card-body text-center mt-2">
+                            <span class="badge bg-light text-dark border rounded-pill px-3 py-1 mb-2 text-uppercase" style="font-size: 0.7rem;">
+                                @item.Product.Category
+                            </span>
+                            <h6 class="card-title fw-bold text-truncate">@item.Product.Name</h6>
+                            <div class="fw-bold fs-5 text-dark mt-2">
+                                @item.Product.Price.ToString("c")
+                            </div>
+                        </div>
+
+                        <div class="card-footer bg-white border-0 text-center pb-3">
+                            <a asp-area="Customer" asp-controller="Home" asp-action="Details" asp-route-productId="@item.ProductId"
+                               class="btn btn-dark w-100 rounded-pill fw-bold">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5 mt-5">
+            <i class="bi bi-heart text-muted opacity-25" style="font-size: 5rem;"></i>
+            <h3 class="text-muted mt-3">Your wishlist is empty</h3>
+            <p class="text-secondary">Looks like you haven't added any products to your wishlist yet.</p>
+            <a asp-area="Customer" asp-controller="Home" asp-action="Index" class="btn btn-primary rounded-pill px-4 py-2 mt-3">
+                Discover Products
+            </a>
+        </div>
+    }
+</div>
+
+<style>
+    .product-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+        }
+</style>

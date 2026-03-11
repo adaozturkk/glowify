@@ -56,6 +56,15 @@
                             </li>
                         }
 
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="Customer" asp-controller="Wishlist" asp-action="Index">
+                                    Wishlist
+                                </a>
+                            </li>
+                        }
+
                         <li class="nav-item">
                             @await Component.InvokeAsync("ShoppingCart")
                         </li>
