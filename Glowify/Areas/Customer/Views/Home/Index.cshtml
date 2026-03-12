@@ -26,12 +26,20 @@
 			}
 		</div>
 
-		<form asp-action="Index" method="get" class="d-flex shadow-sm rounded-pill" style="max-width: 400px; width: 100%;">
+		<form asp-action="Index" method="get" class="d-flex gap-2 w-100 justify-content-md-end justify-content-center">
 			@if (activeCategory != "All")
 			{
 				<input type="hidden" name="category" value="@activeCategory" />
 			}
-			<div class="input-group">
+
+			<select name="sortOrder" class="form-select shadow-sm rounded-pill border-0" style="width: auto; cursor: pointer; background-color: white;" onchange="this.form.submit()">
+				<option value="" selected="@(string.IsNullOrEmpty(ViewBag.CurrentSort) ? "selected" : null)">Default (Newest)</option>
+				<option value="price_asc" selected="@(ViewBag.CurrentSort == "price_asc" ? "selected" : null)">Price: Low to High</option>
+				<option value="price_desc" selected="@(ViewBag.CurrentSort == "price_desc" ? "selected" : null)">Price: High to Low</option>
+				<option value="rating_desc" selected="@(ViewBag.CurrentSort == "rating_desc" ? "selected" : null)">Top Rated</option>
+			</select>
+
+			<div class="input-group shadow-sm rounded-pill" style="max-width: 300px;">
 				<span class="input-group-text bg-white border-end-0 rounded-start-pill ps-3 border-0">
 					<i class="bi bi-search text-muted"></i>
 				</span>
@@ -214,6 +222,7 @@
 					   asp-route-pageNumber="@(ViewBag.CurrentPage - 1)"
 					   asp-route-search="@ViewBag.SearchTerm"
 					   asp-route-category="@ViewBag.CategoryFilter"
+					   asp-route-sortOrder="@ViewBag.CurrentSort"
 					   aria-label="Previous">
 						<span aria-hidden="true">&laquo;</span>
 					</a>
@@ -226,7 +235,9 @@
 						   asp-action="Index"
 						   asp-route-pageNumber="@i"
 						   asp-route-search="@ViewBag.SearchTerm"
-						   asp-route-category="@ViewBag.CategoryFilter">@i</a>
+						   asp-route-category="@ViewBag.CategoryFilter"
+						   asp-route-sortOrder="@ViewBag.CurrentSort">@i
+						</a>
 					</li>
 				}
 
@@ -235,6 +246,7 @@
 					   asp-route-pageNumber="@(ViewBag.CurrentPage + 1)"
 					   asp-route-search="@ViewBag.SearchTerm"
 					   asp-route-category="@ViewBag.CategoryFilter"
+					   asp-route-sortOrder="@ViewBag.CurrentSort"
 					   aria-label="Next">
 						<span aria-hidden="true">&raquo;</span>
 					</a>

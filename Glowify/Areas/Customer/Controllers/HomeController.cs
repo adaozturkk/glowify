@@ -22,7 +22,7 @@ namespace Glowify.Areas.Customer.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        public IActionResult Index(string? search, string? category, int pageNumber = 1)
+        public IActionResult Index(string? search, string? category, string? sortOrder, int pageNumber = 1)
         {
             var productList = _unitOfWork.Product.GetAll();
 
@@ -53,6 +53,22 @@ namespace Glowify.Areas.Customer.Controllers
                     || u.Product.Description.ToLower().Contains(search.ToLower())).ToList();
             }
 
+            switch (sortOrder)
+            {
+                case "price_asc":
+                    productVMs = productVMs.OrderBy(u => u.Product.Price).ToList();
+                    break;
+                case "price_desc":
+                    productVMs = productVMs.OrderByDescending(u => u.Product.Price).ToList();
+                    break;
+                case "rating_desc":
+                    productVMs = productVMs.OrderByDescending(u => u.AverageRating).ToList();
+                    break;
+                default:
+                    productVMs = productVMs.OrderByDescending(u => u.Product.Id).ToList();
+                    break;
+            }
+
             int pageSize = 8;
             int totalItems = productVMs.Count();
             int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
@@ -64,6 +80,8 @@ namespace Glowify.Areas.Customer.Controllers
 
             ViewBag.SearchTerm = search;
             ViewBag.CategoryFilter = category;
+
+            ViewBag.CurrentSort = sortOrder;
 
             ViewBag.UserWishlist = new List<int>();
 
