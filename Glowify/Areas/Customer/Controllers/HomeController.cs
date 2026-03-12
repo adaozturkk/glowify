@@ -108,13 +108,19 @@ namespace Glowify.Areas.Customer.Controllers
                 .Take(pageSize)
                 .ToList();
 
+            var relatedProducts = _unitOfWork.Product
+                .GetAll(u => u.Category == product.Category && u.Id != product.Id)
+                .Take(4)
+                .ToList();
+
             ProductDetailsVM productDetailsVM = new()
             {
                 ShoppingCart = cart,
                 Reviews = paginatedReviews,
                 ProductReview = new ProductReview(),
                 ReviewCount = totalReviews,
-                AverageRating = averageRating
+                AverageRating = averageRating,
+                RelatedProducts = relatedProducts
             };
 
             ViewBag.CurrentPage = pageNumber;

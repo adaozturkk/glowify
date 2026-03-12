@@ -303,6 +303,51 @@
             }
         </div>
     </div>
+
+    @if (Model.RelatedProducts != null && Model.RelatedProducts.Any())
+    {
+        <div class="row mt-5 pt-5 border-top">
+            <div class="col-12 mb-4">
+                <h3 class="fw-bold">You May Also Like</h3>
+                <p class="text-muted small">Explore similar products in the <span class="fw-bold text-dark">@Model.ShoppingCart.Product.Category</span> category.</p>
+            </div>
+
+            @foreach (var item in Model.RelatedProducts)
+            {
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 product-card">
+                        <a asp-action="Details" asp-route-productId="@item.Id">
+                            <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "https://placehold.co/300x300/png" : item.ImageUrl)"
+                                 class="card-img-top rounded-top-4"
+                                 style="object-fit: cover; height: 250px;"
+                                 alt="@item.Name">
+                        </a>
+                        <div class="card-body text-center mt-2">
+                            <h6 class="card-title fw-bold text-truncate mb-1">@item.Name</h6>
+
+                            <div class="mb-2">
+                                @if (item.ListPrice > item.Price)
+                                {
+                                    <span class="text-muted text-decoration-line-through me-2 small">@item.ListPrice.ToString("c")</span>
+                                    <span class="text-danger fw-bold fs-5">@item.Price.ToString("c")</span>
+                                }
+                                else
+                                {
+                                    <span class="fw-bold text-dark fs-5">@item.Price.ToString("c")</span>
+                                }
+                            </div>
+                        </div>
+                        <div class="card-footer bg-white border-0 text-center pb-3">
+                            <a asp-action="Details" asp-route-productId="@item.Id"
+                               class="btn btn-outline-dark w-100 rounded-pill fw-bold hover-effect">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
 </div>
 
 <style>

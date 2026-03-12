@@ -5,6 +5,7 @@
         public ShoppingCart ShoppingCart { get; set; }
         public IEnumerable<ProductReview> Reviews { get; set; }
         public ProductReview ProductReview { get; set; }
+        public IEnumerable<Product> RelatedProducts { get; set; }
         public bool CanReview { get; set; }
         public bool HasReviewed { get; set; }
         public int ReviewCount { get; set; }
