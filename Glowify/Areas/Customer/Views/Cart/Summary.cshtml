@@ -1,128 +1,110 @@
 ﻿@model Glowify.Models.ViewModels.ShoppingCartVM
 
 <form method="post">
-	<div class="container">
-		<div class="card shadow border-0">
-			<div class="card-header bg-secondary bg-gradient text-light ml-0 py-4">
-				<div class="row px-4">
-					<div class="col-6">
-						<h5 class="pt-2 text-white">Order Summary</h5>
-					</div>
-					<div class="col-6 text-end">
-						<a asp-action="Index" class="btn btn-outline-danger btn-sm">Back to Cart</a>
+	<div class="container mt-4 mb-5">
+
+		<div class="d-flex justify-content-between align-items-center mb-4">
+			<h3 class="fw-bold text-dark mb-0">Checkout</h3>
+			<a asp-action="Index" class="btn btn-outline-dark rounded-pill px-4 py-2 shadow-sm d-flex align-items-center gap-2">
+				<i class="bi bi-arrow-left"></i> Back to Cart
+			</a>
+		</div>
+
+		<div class="row g-4">
+			<div class="col-lg-7">
+				<div class="card border-0 shadow-sm h-100" style="border-radius: 15px;">
+					<div class="card-body p-4 p-md-5">
+						<h5 class="fw-bold text-dark mb-4 border-bottom pb-3">Shipping Details</h5>
+
+						<div class="row g-3">
+							<div class="col-sm-6">
+								<label class="form-label text-muted small fw-bold text-uppercase">Full Name</label>
+								<input asp-for="OrderHeader.Name" class="form-control bg-light border-0 py-2 rounded-3" placeholder="Jane Doe" style="box-shadow: none;" />
+								<span asp-validation-for="OrderHeader.Name" class="text-danger small"></span>
+							</div>
+							<div class="col-sm-6">
+								<label class="form-label text-muted small fw-bold text-uppercase">Phone</label>
+								<input asp-for="OrderHeader.PhoneNumber" class="form-control bg-light border-0 py-2 rounded-3" placeholder="(555) 000-0000" style="box-shadow: none;" />
+								<span asp-validation-for="OrderHeader.PhoneNumber" class="text-danger small"></span>
+							</div>
+							<div class="col-12 mt-3">
+								<label class="form-label text-muted small fw-bold text-uppercase">Street Address</label>
+								<input asp-for="OrderHeader.StreetAddress" class="form-control bg-light border-0 py-2 rounded-3" placeholder="123 Skincare Lane" style="box-shadow: none;" />
+								<span asp-validation-for="OrderHeader.StreetAddress" class="text-danger small"></span>
+							</div>
+							<div class="col-sm-5 mt-3">
+								<label class="form-label text-muted small fw-bold text-uppercase">City</label>
+								<input asp-for="OrderHeader.City" class="form-control bg-light border-0 py-2 rounded-3" placeholder="City" style="box-shadow: none;" />
+								<span asp-validation-for="OrderHeader.City" class="text-danger small"></span>
+							</div>
+							<div class="col-sm-4 mt-3">
+								<label class="form-label text-muted small fw-bold text-uppercase">State</label>
+								<input asp-for="OrderHeader.State" class="form-control bg-light border-0 py-2 rounded-3" placeholder="State" style="box-shadow: none;" />
+								<span asp-validation-for="OrderHeader.State" class="text-danger small"></span>
+							</div>
+							<div class="col-sm-3 mt-3">
+								<label class="form-label text-muted small fw-bold text-uppercase">Postal Code</label>
+								<input asp-for="OrderHeader.PostalCode" class="form-control bg-light border-0 py-2 rounded-3" placeholder="Zip" style="box-shadow: none;" />
+								<span asp-validation-for="OrderHeader.PostalCode" class="text-danger small"></span>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
 
-			<div class="card-body">
-				<div class="container rounded p-2">
-					<div class="row">
-						<div class="col-12 col-lg-6 pb-4">
-							<div class="row">
-								<h4 class="d-flex justify-content-between align-items-center mb-3">
-									<span class="text-info">Shipping Details:</span>
-								</h4>
-							</div>
-
-							<div class="row my-1">
-								<div class="col-3"><label>Name</label></div>
-								<div class="col-9">
-									<input asp-for="OrderHeader.Name" class="form-control" placeholder="Full Name" />
-									<span asp-validation-for="OrderHeader.Name" class="text-danger"></span>
-								</div>
-							</div>
-							<div class="row my-1">
-								<div class="col-3"><label>Phone</label></div>
-								<div class="col-9">
-									<input asp-for="OrderHeader.PhoneNumber" class="form-control" placeholder="Phone Number" />
-									<span asp-validation-for="OrderHeader.PhoneNumber" class="text-danger"></span>
-								</div>
-							</div>
-							<div class="row my-1">
-								<div class="col-3"><label>Address</label></div>
-								<div class="col-9">
-									<input asp-for="OrderHeader.StreetAddress" class="form-control" placeholder="Street Address" />
-									<span asp-validation-for="OrderHeader.StreetAddress" class="text-danger"></span>
-								</div>
-							</div>
-							<div class="row my-1">
-								<div class="col-3"><label>City</label></div>
-								<div class="col-9">
-									<input asp-for="OrderHeader.City" class="form-control" placeholder="City" />
-									<span asp-validation-for="OrderHeader.City" class="text-danger"></span>
-								</div>
-							</div>
-							<div class="row my-1">
-								<div class="col-3"><label>State</label></div>
-								<div class="col-9">
-									<input asp-for="OrderHeader.State" class="form-control" placeholder="State" />
-									<span asp-validation-for="OrderHeader.State" class="text-danger"></span>
-								</div>
-							</div>
-							<div class="row my-1">
-								<div class="col-3"><label>Postal Code</label></div>
-								<div class="col-9">
-									<input asp-for="OrderHeader.PostalCode" class="form-control" placeholder="Postal Code" />
-									<span asp-validation-for="OrderHeader.PostalCode" class="text-danger"></span>
-								</div>
-							</div>
-						</div>
-
-						<div class="col-12 col-lg-5 offset-lg-1">
-							<h4 class="d-flex justify-content-between align-items-center mb-3">
-								<span class="text-info">Order Summary:</span>
-							</h4>
-							<ul class="list-group mb-3">
-								@foreach (var details in Model.ShoppingCartList)
-								{
-									<li class="list-group-item d-flex justify-content-between">
-										<div>
-											<h6 class="my-0">@details.Product.Name</h6>
-											<small class="text-muted">Quantity: @details.Count</small>
-										</div>
-										<span class="text-muted">@((details.Product.Price * details.Count).ToString("c"))</span>
-									</li>
-								}
-
-								@if (Model.Coupon != null)
-								{
-									<li class="list-group-item d-flex justify-content-between bg-light">
-										<div class="text-success">
-											<h6 class="my-0">Promo Code</h6>
-											<small>@Model.Coupon.Code</small>
-										</div>
-										<span class="text-success">
-											-@Model.Coupon.DiscountAmount.ToString("c")
-										</span>
-									</li>
-								}
-
-								<li class="list-group-item d-flex justify-content-between">
+			<div class="col-lg-5">
+				<div class="card border-0 shadow-sm sticky-top" style="border-radius: 15px; top: 20px; background-color: #faf8fb;">
+					<div class="card-header bg-secondary bg-gradient text-light py-3 border-0" style="border-top-left-radius: 15px; border-top-right-radius: 15px;">
+						<h5 class="fw-bolder mb-0 text-uppercase" style="letter-spacing: 1px; font-size: 1rem;">Order Summary</h5>
+					</div>
+					<div class="card-body p-4">
+						<ul class="list-group list-group-flush mb-4">
+							@foreach (var details in Model.ShoppingCartList)
+							{
+								<li class="list-group-item d-flex justify-content-between px-0 bg-transparent border-bottom pb-3 mb-2">
 									<div>
-										<h6 class="my-0">Shipping</h6>
+										<h6 class="my-0 fw-bold text-dark text-truncate" style="max-width: 200px;">@details.Product.Name</h6>
+										<small class="text-muted">Quantity: @details.Count</small>
 									</div>
-									<span class="text-muted">@(Model.ShippingCost.ToString("c"))</span>
+									<span class="text-dark fw-medium">@((details.Product.Price * details.Count).ToString("c"))</span>
 								</li>
+							}
 
-								<li class="list-group-item d-flex justify-content-between bg-light">
-									<small class="text-info">Total</small>
-									<strong class="text-info">@Model.OrderTotal.ToString("c")</strong>
+							@if (Model.Coupon != null)
+							{
+								<li class="list-group-item d-flex justify-content-between px-0 bg-transparent border-0 pt-2 pb-2">
+									<div class="text-success">
+										<h6 class="my-0 fw-bold small"><i class="bi bi-tag-fill me-1"></i> Promo Code</h6>
+										<small>@Model.Coupon.Code</small>
+									</div>
+									<span class="text-success fw-bold">
+										-@Model.Coupon.DiscountAmount.ToString("c")
+									</span>
 								</li>
-							</ul>
+							}
+
+							<li class="list-group-item d-flex justify-content-between px-0 bg-transparent border-0 pt-2 pb-2">
+								<span class="text-secondary fw-medium">Shipping</span>
+								<span class="text-dark fw-medium">@(Model.ShippingCost.ToString("c"))</span>
+							</li>
+
+							<li class="list-group-item d-flex justify-content-between px-0 bg-transparent border-top pt-3 mt-2">
+								<span class="fw-bold text-dark fs-5">Total</span>
+								<span class="fw-bold text-dark fs-4">@Model.OrderTotal.ToString("c")</span>
+							</li>
+						</ul>
+
+						<div class="bg-white p-3 rounded-3 mb-4 border border-light shadow-sm d-flex align-items-center">
+							<i class="bi bi-truck text-muted fs-3 me-3"></i>
+							<div>
+								<p class="mb-0 text-secondary small fw-bold text-uppercase" style="font-size: 0.75rem;">Estimate Arrival Date</p>
+								<strong class="text-dark">@DateTime.Now.AddDays(3).ToShortDateString() - @DateTime.Now.AddDays(7).ToShortDateString()</strong>
+							</div>
 						</div>
-					</div>
-				</div>
-			</div>
 
-			<div class="card-footer">
-				<div class="row">
-					<div class="col-12 col-md-8 pt-2">
-						<p style="color:maroon; font-size:14px;">
-							Estimate Arrival Date: @DateTime.Now.AddDays(3).ToShortDateString() - @DateTime.Now.AddDays(7).ToShortDateString()
-						</p>
-					</div>
-					<div class="col-12 col-md-4">
-						<button type="submit" value="Place Order" class="btn btn-primary form-control">Place Order</button>
+						<button type="submit" value="Place Order" class="btn btn-dark w-100 rounded-pill py-3 fw-bold shadow-sm text-uppercase">
+							Place Order <i class="bi bi-check2-circle ms-1"></i>
+						</button>
 					</div>
 				</div>
 			</div>

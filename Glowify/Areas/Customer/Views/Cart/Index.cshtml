@@ -1,138 +1,147 @@
 ﻿@model Glowify.Models.ViewModels.ShoppingCartVM
 
 <form method="post">
-	<div class="card shadow border-0 mt-4 container">
-		<div class="card-header bg-secondary bg-gradient text-light py-4">
-			<div class="row">
-				<div class="col-12 text-center">
-					<h3 class="text-white text-uppercase">Shopping Cart</h3>
-				</div>
-			</div>
+	<div class="container mt-4 mb-5">
+
+		<div class="d-flex justify-content-between align-items-center mb-4">
+			<h3 class="fw-bold text-dark mb-0">Shopping Cart</h3>
+			<a asp-controller="Home" asp-action="Index" class="btn btn-outline-dark rounded-pill px-4 py-2 shadow-sm d-flex align-items-center gap-2">
+				<i class="bi bi-arrow-left"></i> Continue Shopping
+			</a>
 		</div>
 
-		<div class="card-body my-4">
-			@if (Model.ShoppingCartList.Count() > 0) 
+		@if (Model.ShoppingCartList.Count() > 0)
+		{
+			@if (Model.ShippingCost > 0)
 			{
-				@if (Model.ShippingCost > 0)
-				{
-					<div class="alert alert-warning" role="alert">
-						Add <strong>@((1000 - (Model.OrderTotal - Model.ShippingCost)).ToString("c"))</strong> more to get <span class="fw-bold">Free Shipping!</span>
-					</div>
-				}
-				<div class="row mb-3 pb-3">
-					<div class="col-md-2 offset-md-1">
-						<a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary text-uppercase mb-5 btn-sm">
-							<small>Continue Shopping</small>
-						</a>
-					</div>
+				<div class="alert alert-light bg-white border-0 shadow-sm rounded-pill mb-4 px-4 py-3 d-flex align-items-center" role="alert">
+					<i class="bi bi-box-seam text-dark fs-5 me-3"></i>
+					<span class="text-secondary">Add <strong class="text-dark">@((1000 - (Model.OrderTotal - Model.ShippingCost)).ToString("c"))</strong> more to get <span class="fw-bold text-dark">Free Shipping!</span></span>
+				</div>
+			}
 
-					<div class="col-md-10 offset-md-1">
-						@foreach (var item in Model.ShoppingCartList)
-						{
-							<div class="row border-bottom pb-3">
-								<div class="d-none d-lg-block col-lg-1 text-center py-2">
-									<img src="@item.Product.ImageUrl" class="rounded" width="100%" />
-								</div>
-								<div class="col-12 col-lg-6 pt-md-3">
-									<h5 class="text-uppercase text-secondary"><strong>@item.Product.Name</strong></h5>
-									<p><small>@item.Product.Description</small></p>
-								</div>
-								<div class="col-12  col-lg-5 text-center row">
-									<div class="col-3 text-md-right pt-2 pt-md-4">
-										<h6 class="fw-semibold">
-											@item.Product.Price.ToString("c")
-											<span class="text-muted">x</span> @item.Count
-										</h6>
+			<div class="row g-4">
+				<div class="col-lg-8">
+					@foreach (var item in Model.ShoppingCartList)
+					{
+						<div class="card border-0 shadow-sm mb-3" style="border-radius: 15px; overflow: hidden;">
+							<div class="card-body p-3">
+								<div class="row align-items-center">
+									<div class="col-4 col-md-2 text-center">
+										<img src="@item.Product.ImageUrl" class="img-fluid" style="border-radius: 10px; max-height: 90px; object-fit: cover;" />
 									</div>
-									<div class="col-6 col-sm-4 col-lg-6 pt-2">
-										<div class="w-75 btn-group" role="group">
-											<a asp-action="Minus" asp-route-cartId="@item.Id" class="btn btn-outline-primary bg-gradient py-2">
-												<i class="bi bi-dash-square"></i>
+
+									<div class="col-8 col-md-4">
+										<p class="text-muted small mb-1 text-uppercase fw-bold" style="font-size: 0.75rem;">@item.Product.Category</p>
+										<h6 class="fw-bold text-dark text-truncate mb-0">@item.Product.Name</h6>
+									</div>
+
+									<div class="col-6 col-md-3 mt-3 mt-md-0 d-flex justify-content-center">
+										<div class="input-group input-group-sm shadow-sm rounded-pill bg-light" style="max-width: 120px;">
+											<a asp-action="Minus" asp-route-cartId="@item.Id" class="btn btn-light bg-transparent border-0 rounded-start-pill px-3 text-dark">
+												<i class="bi bi-dash"></i>
 											</a>
+											<input type="text" class="form-control text-center border-0 bg-transparent fw-bold text-dark" value="@item.Count" readonly style="box-shadow: none;">
 
 											@if (item.Count < item.Product.Stock)
 											{
-												<a asp-action="Plus" asp-route-cartId="@item.Id" class="btn btn-outline-primary bg-gradient py-2">
-													<i class="bi bi-plus-square"></i>
+												<a asp-action="Plus" asp-route-cartId="@item.Id" class="btn btn-light bg-transparent border-0 rounded-end-pill px-3 text-dark">
+													<i class="bi bi-plus"></i>
 												</a>
 											}
 											else
 											{
-												<button disabled class="btn btn-outline-secondary bg-gradient py-2" style="cursor: not-allowed; opacity: 0.5;">
-													<i class="bi bi-plus-square"></i>
+												<button disabled class="btn btn-light bg-transparent border-0 rounded-end-pill px-3 text-muted" style="cursor: not-allowed;">
+													<i class="bi bi-plus"></i>
 												</button>
 											}
 										</div>
 									</div>
-									<div class="col-3 col-sm-4 col-lg-2 offset-lg-1 text-right pt-2">
-										<a asp-action="Remove" asp-route-cartId="@item.Id" class="btn btn-danger bg-gradient py-2">
-											<i class="bi bi-trash-fill"></i>
+
+									<div class="col-4 col-md-2 mt-3 mt-md-0 text-end text-md-center">
+										<h6 class="fw-bold text-dark mb-0">@item.Product.Price.ToString("c")</h6>
+										<span class="text-muted small">x @item.Count</span>
+									</div>
+
+									<div class="col-2 col-md-1 mt-3 mt-md-0 text-end">
+										<a asp-action="Remove" asp-route-cartId="@item.Id" class="btn btn-light bg-white border-0 rounded-circle shadow-sm text-danger d-flex justify-content-center align-items-center mx-auto" style="width: 38px; height: 38px;">
+											<i class="bi bi-trash3"></i>
 										</a>
 									</div>
 								</div>
 							</div>
-						}
+						</div>
+					}
+				</div>
 
-						<div class="row pt-4">
-							<div class="col-md-5 offset-md-5">
-								<ul class="list-group mb-4">
-									<li class="list-group-item d-flex justify-content-between align-items-center">
-										<h5 class="fw-bold text-secondary">Shipping</h5>
-										@if (Model.ShippingCost > 0)
-										{
-											<h4 class="fw-bolder">@Model.ShippingCost.ToString("c")</h4>
-										}
-										else
-										{
-											<h4 class="fw-bolder">Free</h4>
-										}
-									</li>
+				<div class="col-lg-4">
+					<div class="card border-0 shadow-sm sticky-top" style="border-radius: 15px; top: 20px;">
+						<div class="card-body p-4">
+							<h5 class="fw-bold text-dark mb-4">Order Summary</h5>
 
-									<li class="list-group-item d-flex flex-column bg-light">
-										@if (Model.Coupon != null && Model.Coupon.DiscountAmount > 0)
-										{
-											<div class="d-flex justify-content-between align-items-center w-100">
-												<div>
-													<h6 class="text-success fw-bold my-0">@Model.Coupon.Code Applied!</h6>
-													<small class="text-muted">Discount</small>
-												</div>
-												<span class="text-success fw-bold">-@Model.Coupon.DiscountAmount.ToString("c")</span>
-											</div>
-											<button type="submit" asp-action="RemoveCoupon" class="btn btn-sm btn-outline-danger mt-2 w-100">
-												Remove Coupon
-											</button>
-										}
-										else
-										{
-											<div class="input-group">
-												<input asp-for="CouponCode" class="form-control" placeholder="Coupon Code" />
-												<button type="submit" asp-action="ApplyCoupon" class="btn btn-primary bg-gradient">Apply</button>
-											</div>
-										}
-									</li>
+							<div class="mb-4">
+								@if (Model.Coupon != null && Model.Coupon.DiscountAmount > 0)
+								{
+									<div class="d-flex justify-content-between align-items-center bg-light rounded-pill px-3 py-2 mb-2 shadow-sm border border-success border-opacity-25">
+										<span class="fw-bold text-success small"><i class="bi bi-tag-fill me-1"></i> @Model.Coupon.Code Applied</span>
+										<span class="fw-bold text-success small">-@Model.Coupon.DiscountAmount.ToString("c")</span>
+									</div>
 
-									<li class="list-group-item d-flex justify-content-between align-items-center bg-light">
-										<h5 class="fw-bold text-secondary">Total (Inc. Tax)</h5>
-										<h4 class="fw-bolder">@Model.OrderTotal.ToString("c")</h4>
-									</li>
-								</ul>
-								<div class="d-grid gap-2">
-									<a asp-action="Summary" class="btn btn-primary bg-gradient py-2 form-control">Summary</a>
-								</div>
+									<button type="submit" asp-action="RemoveCoupon" class="btn btn-sm btn-outline-danger rounded-pill w-100">
+										Remove Coupon
+									</button>
+								}
+								else
+								{
+									<div class="input-group shadow-sm rounded-pill">
+										<input asp-for="CouponCode" class="form-control border-0 rounded-start-pill ps-3 bg-light" placeholder="Promo code" style="box-shadow: none;" />
+										<button type="submit" asp-action="ApplyCoupon" class="btn btn-dark rounded-end-pill px-4">Apply</button>
+									</div>
+								}
 							</div>
+
+							<ul class="list-group list-group-flush mb-4">
+								<li class="list-group-item d-flex justify-content-between align-items-center px-0 bg-transparent border-0 pb-2">
+									<span class="text-secondary fw-medium">Shipping</span>
+									@if (Model.ShippingCost > 0)
+									{
+										<span class="fw-bold text-dark">@Model.ShippingCost.ToString("c")</span>
+									}
+									else
+									{
+										<span class="badge bg-dark rounded-pill px-3 py-1">Free</span>
+									}
+								</li>
+								<li class="list-group-item d-flex justify-content-between align-items-center px-0 bg-transparent border-top pt-3 mt-2">
+									<span class="fw-bold text-dark fs-5">Total</span>
+									<span class="fw-bold text-dark fs-4">@Model.OrderTotal.ToString("c")</span>
+								</li>
+							</ul>
+
+							<a asp-action="Summary" class="btn btn-dark w-100 rounded-pill py-3 fw-bold shadow-sm d-flex justify-content-center align-items-center gap-2">
+								Checkout <i class="bi bi-arrow-right"></i>
+							</a>
 						</div>
 					</div>
 				</div>
-			}
-			else
-			{
-				<div class="text-center my-5 py-5">
-					<h4 class="text-muted fw-bold">Your cart is empty.</h4>
-					<a asp-controller="Home" asp-action="Index" class="btn btn-primary bg-gradient px-5 py-2 mt-3">
-						Start Shopping
-					</a>
+			</div>
+		}
+		else
+		{
+			<div class="col-12 text-center py-5 my-5 bg-white shadow-sm" style="border-radius: 15px;">
+				<div class="mb-4">
+					<i class="bi bi-cart3 text-muted" style="font-size: 4rem; opacity: 0.3;"></i>
 				</div>
-			}
-		</div>
+				<h4 class="text-dark fw-bold">Your cart is empty</h4>
+				<p class="text-secondary mb-4">Explore our products and find your perfect skincare routine.</p>
+				<a asp-controller="Home" asp-action="Index" class="btn btn-outline-dark px-5 py-2 rounded-pill shadow-sm">Start Shopping</a>
+			</div>
+		}
 	</div>
 </form>
+
+<style>
+	.form-control:focus {
+		box-shadow: none;
+	}
+</style>
