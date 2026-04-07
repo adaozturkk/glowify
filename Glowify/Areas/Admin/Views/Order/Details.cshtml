@@ -2,176 +2,180 @@
 @model Glowify.Models.ViewModels.OrderVM
 
 <form method="post">
-    <input asp-for="OrderHeader.Id" hidden />
-    <br />
-    <div class="container">
-        <div class="card">
-            <div class="card-header bg-dark text-light ml-0">
-                <div class="container row">
-                    <div class="col-12 d-none d-md-block col-md-6 pb-1">
-                        <i class="fas fa-shopping-cart"></i> &nbsp; Order Summary
-                    </div>
-                    <div class="col-12 col-md-4 offset-md-2 text-right">
-                        <a asp-action="Index" class="btn btn-outline-info form-control btn-sm">Back to Orders</a>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="container rounded p-2">
-                    <div class="row">
-                        <div class="col-12 col-lg-6 pb-4">
-                            <div class="row">
-                                <h4 class="d-flex justify-content-between align-items-center mb-3">
-                                    <span class="text-primary">PickUp Details:</span>
-                                </h4>
-                            </div>
-                            <div class="row my-1">
-                                <div class="col-3">Name</div>
-                                <div class="col-9">
-                                    <input asp-for="OrderHeader.Name" readonly class="form-control" />
-                                </div>
-                            </div>
-                            <div class="row my-1">
-                                <div class="col-3">Phone</div>
-                                <div class="col-9">
-                                    <input asp-for="OrderHeader.PhoneNumber" readonly class="form-control" />
-                                </div>
-                            </div>
-                            <div class="row my-1">
-                                <div class="col-3">Address</div>
-                                <div class="col-9">
-                                    <input asp-for="OrderHeader.StreetAddress" readonly class="form-control" />
-                                </div>
-                            </div>
-                            <div class="row my-1">
-                                <div class="col-3">City</div>
-                                <div class="col-9">
-                                    <input asp-for="OrderHeader.City" readonly class="form-control" />
-                                </div>
-                            </div>
-                            <div class="row my-1">
-                                <div class="col-3">Email</div>
-                                <div class="col-9">
-                                    <input asp-for="OrderHeader.ApplicationUser.Email" readonly class="form-control" />
-                                </div>
-                            </div>
-                            <div class="row my-1">
-                                <div class="col-3">Order Date</div>
-                                <div class="col-9">
-                                    <input value="@Model.OrderHeader.OrderDate.ToShortDateString()" readonly class="form-control" />
-                                </div>
-                            </div>
-                            <div class="row my-1">
-                                <div class="col-3">Carrier</div>
-                                <div class="col-9">
-                                    @if (Model.OrderHeader.OrderStatus == SD.StatusInProcess)
-                                    {
-                                        <input asp-for="OrderHeader.Carrier" id="carrier" class="form-control" />
-                                    }
-                                    else
-                                    {
-                                        <input asp-for="OrderHeader.Carrier" readonly class="form-control" />
-                                    }
-                                </div>
-                            </div>
-                            <div class="row my-1">
-                                <div class="col-3">Tracking</div>
-                                <div class="col-9">
-                                    @if (Model.OrderHeader.OrderStatus == SD.StatusInProcess)
-                                    {
-                                        <input asp-for="OrderHeader.TrackingNumber" id="trackingNumber" class="form-control" />
-                                    }
-                                    else
-                                    {
-                                        <input asp-for="OrderHeader.TrackingNumber" readonly class="form-control" />
-                                    }
-                                </div>
-                            </div>
-                        </div>
+	<input asp-for="OrderHeader.Id" hidden />
 
-                        <div class="col-12 col-lg-5 offset-lg-1">
-                            <h4 class="d-flex justify-content-between align-items-center mb-3">
-                                <span class="text-primary">Order Summary</span>
-                            </h4>
-                            <label class="btn btn-outline-primary form-control my-2">Order Status - @Model.OrderHeader.OrderStatus</label>
+	<div class="py-4 bg-white" style="min-height: 80vh;">
+		<div class="container mb-4">
 
-                            <ul class="list-group mb-3">
-                                @foreach (var detail in Model.OrderDetail)
-                                {
-                                    <li class="list-group-item d-flex justify-content-between p-2">
-                                        <div class="row container">
-                                            <div class="col-8">
-                                                <h6 class="my-0 text-primary">@detail.Product.Name</h6>
-                                                <small class="text-muted">Price : @detail.Price.ToString("c")</small><br />
-                                                <small class="text-muted">Quantity : @detail.Count</small>
-                                            </div>
-                                            <div class="col-4 text-end">
-                                                <p class="text-success">@((detail.Count * detail.Price).ToString("c"))</p>
-                                            </div>
-                                        </div>
-                                    </li>
-                                }
-                                <li class="list-group-item bg-info">
-                                    <div class="row container">
-                                        <div class="col-6">
-                                            <h5 class="text-white">TOTAL </h5>
-                                        </div>
-                                        <div class="col-6 text-end">
-                                            <h5 class="text-white">@Model.OrderHeader.OrderTotal.ToString("c")</h5>
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-                            @if (Model.OrderHeader.OrderStatus == SD.StatusApproved)
-                            {
-                                <button type="submit" asp-action="StartProcessing" class="btn btn-primary form-control my-1">Start Processing</button>
-                            }
+			<div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+				<h4 class="fw-bold text-dark mb-0">Order Management</h4>
+				<a asp-action="Index" class="btn btn-outline-dark rounded-pill px-3 py-1 shadow-sm d-flex align-items-center gap-2 fw-medium small">
+					<i class="bi bi-arrow-left"></i> Back to Orders
+				</a>
+			</div>
 
-                            @if (Model.OrderHeader.OrderStatus == SD.StatusInProcess)
-                            {
-                                <button type="submit" onclick="return validateInput()" asp-action="ShipOrder" class="btn btn-primary form-control my-1">Ship Order</button>
-                            }
+			<div class="row g-4">
+				<div class="col-lg-7">
+					<div class="card border border-secondary border-opacity-25 shadow-sm rounded-3 h-100">
+						<div class="card-header bg-white border-bottom py-3 rounded-top-3">
+							<h6 class="fw-bold text-dark mb-0 text-uppercase">Delivery Information</h6>
+						</div>
+						<div class="card-body p-4">
 
-                            @if (Model.OrderHeader.OrderStatus != SD.StatusRefunded &&
-                                 Model.OrderHeader.OrderStatus != SD.StatusCancelled &&
-                                 Model.OrderHeader.OrderStatus != SD.StatusShipped &&
-                                 Model.OrderHeader.OrderStatus != SD.StatusDelivered)
-                            {
-                                <button type="submit" asp-action="CancelOrder" class="btn btn-danger form-control my-1">Cancel Order</button>
-                            }
+							<div class="row g-3">
+								<div class="col-sm-12">
+									<label class="form-label text-dark small fw-bold mb-1">Name</label>
+									<input asp-for="OrderHeader.Name" readonly class="form-control rounded-pill border-secondary border-opacity-50 text-dark ps-3" style="background-color: #fafafa;" />
+								</div>
+								<div class="col-sm-6">
+									<label class="form-label text-dark small fw-bold mb-1">Phone</label>
+									<input asp-for="OrderHeader.PhoneNumber" readonly class="form-control rounded-pill border-secondary border-opacity-50 text-dark ps-3" style="background-color: #fafafa;" />
+								</div>
+								<div class="col-sm-6">
+									<label class="form-label text-dark small fw-bold mb-1">Email</label>
+									<input asp-for="OrderHeader.ApplicationUser.Email" readonly class="form-control rounded-pill border-secondary border-opacity-50 text-dark ps-3" style="background-color: #fafafa;" />
+								</div>
+								<div class="col-12">
+									<label class="form-label text-dark small fw-bold mb-1">Address</label>
+									<input asp-for="OrderHeader.StreetAddress" readonly class="form-control rounded-pill border-secondary border-opacity-50 text-dark ps-3" style="background-color: #fafafa;" />
+								</div>
+								<div class="col-sm-6">
+									<label class="form-label text-dark small fw-bold mb-1">City</label>
+									<input asp-for="OrderHeader.City" readonly class="form-control rounded-pill border-secondary border-opacity-50 text-dark ps-3" style="background-color: #fafafa;" />
+								</div>
+								<div class="col-sm-6">
+									<label class="form-label text-dark small fw-bold mb-1">Order Date</label>
+									<input value="@Model.OrderHeader.OrderDate.ToShortDateString()" readonly class="form-control rounded-pill border-secondary border-opacity-50 text-dark ps-3" style="background-color: #fafafa;" />
+								</div>
 
-                            @if (Model.OrderHeader.OrderStatus == SD.StatusShipped)
-                            {
-                                <button type="submit" asp-action="DeliverOrder" class="btn btn-primary form-control my-1">Deliver Order</button>
-                            }
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+								<div class="col-12 mt-4 pt-3 border-top">
+									<h6 class="fw-bold text-dark mb-3 text-uppercase small">Shipping Actions</h6>
+									<div class="row g-3">
+										<div class="col-sm-6">
+											<label class="form-label text-dark small fw-bold mb-1">Carrier</label>
+											@if (Model.OrderHeader.OrderStatus == SD.StatusInProcess)
+											{
+												<input asp-for="OrderHeader.Carrier" id="carrier" class="form-control rounded-pill border-dark shadow-sm ps-3" placeholder="e.g. FedEx, UPS" />
+											}
+											else
+											{
+												<input asp-for="OrderHeader.Carrier" readonly class="form-control rounded-pill border-secondary border-opacity-50 text-primary fw-bold ps-3" style="background-color: #fafafa;" />
+											}
+										</div>
+										<div class="col-sm-6">
+											<label class="form-label text-dark small fw-bold mb-1">Tracking Number</label>
+											@if (Model.OrderHeader.OrderStatus == SD.StatusInProcess)
+											{
+												<input asp-for="OrderHeader.TrackingNumber" id="trackingNumber" class="form-control rounded-pill border-dark shadow-sm ps-3" placeholder="Enter tracking code" />
+											}
+											else
+											{
+												<input asp-for="OrderHeader.TrackingNumber" readonly class="form-control rounded-pill border-secondary border-opacity-50 text-primary fw-bold ps-3" style="background-color: #fafafa;" />
+											}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="col-lg-5">
+					<div class="card border border-secondary border-opacity-25 shadow-sm rounded-3 sticky-top" style="top: 20px;">
+						<div class="card-header bg-dark text-white rounded-top-3 py-3">
+							<h6 class="fw-bold mb-0 text-uppercase">Order Summary</h6>
+						</div>
+
+						<div class="card-body p-3">
+
+							<div class="d-flex justify-content-between align-items-center border border-secondary border-opacity-25 bg-light rounded-pill py-2 px-3 mb-3 shadow-sm">
+								<span class="text-dark small fw-bold">Status:</span>
+								<span class="fw-bold text-primary text-uppercase small">@Model.OrderHeader.OrderStatus</span>
+							</div>
+
+							<div class="mb-3">
+								<ul class="list-group list-group-flush border border-secondary border-opacity-25 rounded-3 overflow-hidden">
+									@foreach (var detail in Model.OrderDetail)
+									{
+										<li class="list-group-item d-flex justify-content-between align-items-center px-3 py-2">
+											<div>
+												<h6 class="my-0 fw-bold text-dark text-truncate small" style="max-width: 180px;">@detail.Product.Name</h6>
+												<small class="text-muted" style="font-size: 0.75rem;">@detail.Price.ToString("c") x @detail.Count</small>
+											</div>
+											<span class="text-success fw-bold small">@((detail.Count * detail.Price).ToString("c"))</span>
+										</li>
+									}
+								</ul>
+							</div>
+
+							<div class="d-flex justify-content-between align-items-center px-4 py-2 bg-dark rounded-pill mb-3">
+								<span class="fw-bold text-white small text-uppercase">Total</span>
+								<span class="fw-bold text-white">@Model.OrderHeader.OrderTotal.ToString("c")</span>
+							</div>
+
+							<div class="pt-2">
+								@if (Model.OrderHeader.OrderStatus == SD.StatusApproved)
+								{
+									<button type="submit" asp-action="StartProcessing" class="btn btn-dark w-100 rounded-pill py-2 fw-bold text-uppercase small mb-2 shadow-sm">
+										<i class="bi bi-box-seam me-1"></i> Start Processing
+									</button>
+								}
+
+								@if (Model.OrderHeader.OrderStatus == SD.StatusInProcess)
+								{
+									<button type="submit" onclick="return validateInput()" asp-action="ShipOrder" class="btn btn-dark w-100 rounded-pill py-2 fw-bold text-uppercase small mb-2 shadow-sm">
+										<i class="bi bi-truck me-1"></i> Ship Order
+									</button>
+								}
+
+								@if (Model.OrderHeader.OrderStatus == SD.StatusShipped)
+								{
+									<button type="submit" asp-action="DeliverOrder" class="btn btn-success w-100 rounded-pill py-2 fw-bold text-uppercase small mb-2 shadow-sm">
+										<i class="bi bi-check2-circle me-1"></i> Deliver Order
+									</button>
+								}
+
+								@if (Model.OrderHeader.OrderStatus != SD.StatusRefunded &&
+																Model.OrderHeader.OrderStatus != SD.StatusCancelled &&
+																Model.OrderHeader.OrderStatus != SD.StatusShipped &&
+																Model.OrderHeader.OrderStatus != SD.StatusDelivered)
+								{
+									<button type="submit" asp-action="CancelOrder" class="btn btn-outline-danger w-100 rounded-pill py-2 fw-bold text-uppercase small mt-1">
+										<i class="bi bi-x-circle me-1"></i> Cancel Order
+									</button>
+								}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </form>
 
 @section Scripts {
-    <script>
-        function validateInput(){
-            if(document.getElementById("trackingNumber").value==""){
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Please enter tracking number!',
-                });
-                return false;
-            }
-            if(document.getElementById("carrier").value==""){
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Please enter carrier!',
-                });
-                return false;
-            }
-            return true;
-        }
-    </script>
+	<script>
+		function validateInput(){
+			let trackingInput = document.getElementById("trackingNumber");
+			let carrierInput = document.getElementById("carrier");
+
+			if(trackingInput && trackingInput.value == ""){
+				Swal.fire({
+					icon: 'error',
+					title: 'Oops...',
+					text: 'Please enter tracking number!',
+				});
+				return false;
+			}
+			if(carrierInput && carrierInput.value == ""){
+				Swal.fire({
+					icon: 'error',
+					title: 'Oops...',
+					text: 'Please enter carrier!',
+				});
+				return false;
+			}
+			return true;
+		}
+	</script>
 }

@@ -74,6 +74,11 @@ namespace Glowify.Areas.Admin.Controllers
                 OrderDetail = _unitOfWork.OrderDetail.GetAll(includeProperties: "Product").Where(u => u.OrderHeaderId == orderId).ToList()
             };
 
+            if (orderVM.OrderHeader == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             return View(orderVM);
         }
 

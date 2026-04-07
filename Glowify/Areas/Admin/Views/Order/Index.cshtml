@@ -3,79 +3,81 @@
     ViewData["Title"] = "Order List";
     var status = Context.Request.Query["status"];
 
-    var all = "text-primary";
-    var pending = "text-primary";
-    var inprocess = "text-primary";
-    var shipped = "text-primary";
-    var completed = "text-primary";
-    var approved = "text-primary";
-    var cancelled = "text-primary";
+    var all = "btn-outline-dark";
+    var pending = "btn-outline-dark";
+    var inprocess = "btn-outline-dark";
+    var shipped = "btn-outline-dark";
+    var completed = "btn-outline-dark";
+    var approved = "btn-outline-dark";
+    var cancelled = "btn-outline-dark";
+
+    var activeClass = "btn-dark fw-bold shadow-sm";
 
     switch (status)
     {
-        case "pending": pending = "active text-white bg-primary"; break;
-        case "inprocess": inprocess = "active text-white bg-primary"; break;
-        case "shipped": shipped = "active text-white bg-primary"; break;
-        case "completed": completed = "active text-white bg-primary"; break;
-        case "approved": approved = "active text-white bg-primary"; break;
-        case "cancelled": cancelled = "active text-white bg-primary"; break;
-        default: all = "active text-white bg-primary"; break;
+        case "pending": pending = activeClass; break;
+        case "inprocess": inprocess = activeClass; break;
+        case "shipped": shipped = activeClass; break;
+        case "completed": completed = activeClass; break;
+        case "approved": approved = activeClass; break;
+        case "cancelled": cancelled = activeClass; break;
+        default: all = activeClass; break;
     }
 }
 
-<div class="container p-3">
-    <div class="d-flex justify-content-between pt-4">
-        <div class="p-2">
-            <h2 class="text-primary">Order List</h2>
+<div class="container mt-4 mb-5">
+
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center mb-4 gap-3">
+        <div>
+            <h3 class="fw-bold text-dark mb-0">Order Management</h3>
         </div>
-        <div class="p-2">
-            <ul class="list-group list-group-horizontal-sm">
-                <a style="text-decoration:none;" asp-controller="Order" asp-action="Index" asp-route-status="inprocess">
-                    <li class="list-group-item @inprocess">Processing</li>
-                </a>
 
-                <a style="text-decoration:none;" asp-controller="Order" asp-action="Index" asp-route-status="pending">
-                    <li class="list-group-item @pending">Payment Pending</li>
-                </a>
-
-                <a style="text-decoration:none;" asp-controller="Order" asp-action="Index" asp-route-status="shipped">
-                    <li class="list-group-item @shipped">Shipped</li>
-                </a>
-
-                <a style="text-decoration:none;" asp-controller="Order" asp-action="Index" asp-route-status="approved">
-                    <li class="list-group-item @approved">Approved</li>
-                </a>
-
-                <a style="text-decoration:none;" asp-controller="Order" asp-action="Index" asp-route-status="cancelled">
-                    <li class="list-group-item @cancelled">Cancelled</li>
-                </a>
-
-                <a style="text-decoration:none;" asp-controller="Order" asp-action="Index" asp-route-status="completed">
-                    <li class="list-group-item @completed">Completed</li>
-                </a>
-
-                <a style="text-decoration:none;" asp-controller="Order" asp-action="Index" asp-route-status="all">
-                    <li class="list-group-item @all">All</li>
-                </a>
-            </ul>
+        <div class="d-flex flex-wrap gap-2">
+            <a asp-controller="Order" asp-action="Index" asp-route-status="inprocess" class="btn rounded-pill px-3 py-2 small @inprocess">
+                Processing
+            </a>
+            <a asp-controller="Order" asp-action="Index" asp-route-status="pending" class="btn rounded-pill px-3 py-2 small @pending">
+                Payment Pending
+            </a>
+            <a asp-controller="Order" asp-action="Index" asp-route-status="shipped" class="btn rounded-pill px-3 py-2 small @shipped">
+                Shipped
+            </a>
+            <a asp-controller="Order" asp-action="Index" asp-route-status="approved" class="btn rounded-pill px-3 py-2 small @approved">
+                Approved
+            </a>
+            <a asp-controller="Order" asp-action="Index" asp-route-status="cancelled" class="btn rounded-pill px-3 py-2 small @cancelled">
+                Cancelled
+            </a>
+            <a asp-controller="Order" asp-action="Index" asp-route-status="completed" class="btn rounded-pill px-3 py-2 small @completed">
+                Completed
+            </a>
+            <a asp-controller="Order" asp-action="Index" asp-route-status="all" class="btn rounded-pill px-4 py-2 small @all">
+                All
+            </a>
         </div>
     </div>
 
-    <br /><br />
-
-    <table id="tblData" data-url="/Admin/Order/GetAll" data-details-url="/Admin/Order/Details" class="table table-bordered table-striped" style="width:100%">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Phone Number</th>
-                <th>Email</th>
-                <th>Status</th>
-                <th>Total</th>
-                <th></th>
-            </tr>
-        </thead>
-    </table>
+    <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+        <div class="card-body p-4">
+            <div class="table-responsive">
+                <table id="tblData" data-url="/Admin/Order/GetAll" data-details-url="/Admin/Order/Details" class="table table-bordered table-striped table-hover align-middle mb-0" style="width:100%">
+                    <thead class="table-light text-dark small text-uppercase fw-bold">
+                        <tr>
+                            <th class="py-3">ID</th>
+                            <th class="py-3">Name</th>
+                            <th class="py-3">Phone Number</th>
+                            <th class="py-3">Email</th>
+                            <th class="py-3">Status</th>
+                            <th class="py-3">Total</th>
+                            <th class="py-3 text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {

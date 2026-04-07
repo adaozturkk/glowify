@@ -41,6 +41,11 @@ namespace Glowify.Areas.Customer.Controllers
                 OrderDetail = _unitOfWork.OrderDetail.GetAll(includeProperties: "Product").Where(u => u.OrderHeaderId == orderId).ToList()
             };
 
+            if (orderVM.OrderHeader == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             return View(orderVM);
         }
 
@@ -49,9 +54,12 @@ namespace Glowify.Areas.Customer.Controllers
         {
             var orderHeader = _unitOfWork.OrderHeader.Get(u => u.Id == orderVM.OrderHeader.Id);
 
-            if (orderHeader.OrderStatus == SD.StatusShipped)
+            if (orderHeader.OrderStatus == SD.StatusRefunded ||
+                orderHeader.OrderStatus == SD.StatusCancelled ||
+                orderHeader.OrderStatus == SD.StatusShipped ||
+                orderHeader.OrderStatus == SD.StatusDelivered)
             {
-                TempData["Error"] = "Shipped orders cannot be cancelled!";
+                TempData["Error"] = "This order cannot be cancelled!";
                 return RedirectToAction(nameof(Details), "Order", new { orderId = orderVM.OrderHeader.Id });
             }
 
