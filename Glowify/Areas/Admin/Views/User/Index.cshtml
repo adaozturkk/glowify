@@ -2,25 +2,32 @@
     ViewData["Title"] = "User Management";
 }
 
-<div class="container-fluid p-4 bg-light min-vh-100">
-    <div class="card border-0 rounded-4 shadow-sm my-4">
-        <div class="card-header bg-dark text-white border-0 pt-4 pb-3 px-4 d-flex justify-content-between align-items-center">
-            <h4 class="mb-0"><i class="bi bi-people-fill"></i> User Management</h4>
+<div class="py-4 bg-white" style="min-height: 80vh;">
+    <div class="container mb-4">
+
+        <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+            <h4 class="fw-bold text-dark mb-0">User Management</h4>
         </div>
-        <div class="card-body p-4">
-            <table id="tblData" class="table table-hover table-borderless align-middle" style="width:100%">
-                <thead class="table-light">
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th>Role</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-            </table>
+
+        <div class="card border border-secondary border-opacity-25 shadow-sm rounded-3">
+            <div class="card-body p-4">
+                <div class="table-responsive">
+                    <table id="tblData" class="table table-bordered table-striped table-hover align-middle mb-0" style="width:100%">
+                        <thead class="table-light text-dark small text-uppercase fw-bold">
+                            <tr>
+                                <th class="py-3">Name</th>
+                                <th class="py-3">Email</th>
+                                <th class="py-3">Phone</th>
+                                <th class="py-3">Role</th>
+                                <th class="py-3">Status</th>
+                                <th class="py-3 text-center" style="width: 15%">Actions</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
         </div>
+
     </div>
 </div>
 
