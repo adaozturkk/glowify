@@ -1,32 +1,36 @@
 ﻿@{
-    ViewData["Title"] = "List Product";
+    ViewData["Title"] = "Product List";
 }
 
-<div class="container p-3">
-    <div class="row pt-4">
-        <div class="col-6">
-            <h2 class="text-primary">Product List</h2>
-        </div>
-        <div class="col-6 text-end">
-            <a asp-controller="Product" asp-action="Upsert" class="btn btn-primary">
-                <i class="bi bi-plus-circle"></i> &nbsp; Create New Product
+<div class="py-4 bg-white" style="min-height: 80vh;">
+    <div class="container mb-4">
+
+        <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+            <h4 class="fw-bold text-dark mb-0">Product Management</h4>
+            <a asp-controller="Product" asp-action="Upsert" class="btn btn-dark rounded-pill px-4 py-2 shadow-sm d-flex align-items-center gap-2 fw-medium small">
+                <i class="bi bi-plus-circle"></i> Create New Product
             </a>
         </div>
+
+        <div class="card border border-secondary border-opacity-25 shadow-sm rounded-3">
+            <div class="card-body p-4">
+                <div class="table-responsive">
+                    <table id="tblData" class="table table-bordered table-striped table-hover align-middle mb-0" style="width:100%">
+                        <thead class="table-light text-dark small text-uppercase fw-bold">
+                            <tr>
+                                <th class="py-3">Product Name</th>
+                                <th class="py-3">Price</th>
+                                <th class="py-3">Stock</th>
+                                <th class="py-3">Category</th>
+                                <th class="py-3 text-center" style="width: 15%">Actions</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+
     </div>
-
-    <br /><br />
-
-    <table id="tblData" class="table table-bordered table-striped" style="width:100%">
-        <thead>
-            <tr>
-                <th>Product Name</th>
-                <th>Price</th>
-                <th>Stock</th>
-                <th>Category</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-    </table>
 </div>
 
 @section Scripts {

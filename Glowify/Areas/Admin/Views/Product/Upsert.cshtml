@@ -4,116 +4,122 @@
     <input asp-for="Product.Id" hidden />
     <input asp-for="Product.ImageUrl" hidden />
 
-    <div class="row">
-        <div class="col-10 offset-1">
-            <div class="border p-4 mt-4 shadow-sm rounded bg-white">
+    <div class="py-4 bg-white" style="min-height: 80vh;">
+        <div class="container mb-4">
 
-                <div class="row pb-3">
-                    <div class="col-12">
-                        <h2 class="text-primary fw-bold">@(Model.Product.Id != 0 ? "Update" : "Create") Product</h2>
-                        <hr />
-                    </div>
-                </div>
+            <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+                <h4 class="fw-bold text-dark mb-0">@(Model.Product.Id != 0 ? "Edit" : "Create New") Product</h4>
+                <a asp-controller="Product" asp-action="Index" class="btn btn-outline-dark rounded-pill px-3 py-1 shadow-sm d-flex align-items-center gap-2 fw-medium small">
+                    <i class="bi bi-arrow-left"></i> Back to List
+                </a>
+            </div>
 
-                <div class="row">
-                    <div class="@(Model.Product.Id != 0 ? "col-md-9" : "col-12")">
-
-                        <div class="mb-3">
-                            <label asp-for="Product.Name" class="form-label fw-bold"></label>
-                            <input asp-for="Product.Name" class="form-control" placeholder="Product Name" />
-                            <span asp-validation-for="Product.Name" class="text-danger"></span>
+            <div class="row">
+                <div class="col-lg-10 mx-auto">
+                    <div class="card border-0 shadow-sm rounded-3">
+                        <div class="card-header bg-white border-bottom py-3 rounded-top-3">
+                            <h6 class="fw-bold text-primary mb-0 text-uppercase d-flex align-items-center gap-2">
+                                <i class="bi bi-box-seam fs-5"></i> Product Details
+                            </h6>
                         </div>
 
-                        <div class="mb-3">
-                            <label asp-for="Product.Description" class="form-label fw-bold"></label>
-                            <textarea asp-for="Product.Description" rows="3" class="form-control" placeholder="Product Description"></textarea>
-                            <span asp-validation-for="Product.Description" class="text-danger"></span>
-                        </div>
+                        <div class="card-body p-4 p-md-5 bg-white rounded-bottom-3">
+                            <div class="row">
+                                <div class="@(Model.Product.Id != 0 ? "col-md-9" : "col-12") pe-md-4">
+                                    <div class="row g-4">
 
-                        <div class="mb-3">
-                            <label asp-for="Product.IngredientsList" class="form-label fw-bold"></label>
-                            <textarea asp-for="Product.IngredientsList" rows="3" class="form-control" placeholder="Full Ingredient List (Aqua, Glycerin, etc.)"></textarea>
-                            <span asp-validation-for="Product.IngredientsList" class="text-danger"></span>
-                        </div>
+                                        <div class="col-12">
+                                            <label asp-for="Product.Name" class="form-label text-muted small fw-bold mb-1 text-uppercase"></label>
+                                            <input asp-for="Product.Name" class="form-control rounded-pill shadow-sm ps-3" placeholder="Ex: Glow Serum" style="border: 1px solid #dee2e6;" />
+                                            <span asp-validation-for="Product.Name" class="text-danger small fw-medium"></span>
+                                        </div>
 
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label asp-for="Product.MainIngredient" class="form-label fw-bold"></label>
-                                <input asp-for="Product.MainIngredient" class="form-control" placeholder="Ex: Vitamin C" />
-                                <span asp-validation-for="Product.MainIngredient" class="text-danger"></span>
-                            </div>
-                            <div class="col-md-6">
-                                <label asp-for="Product.Stock" class="form-label fw-bold"></label>
-                                <input asp-for="Product.Stock" class="form-control" placeholder="Quantity" />
-                                <span asp-validation-for="Product.Stock" class="text-danger"></span>
-                            </div>
-                        </div>
+                                        <div class="col-12">
+                                            <label asp-for="Product.Description" class="form-label text-muted small fw-bold mb-1 text-uppercase"></label>
+                                            <textarea asp-for="Product.Description" rows="3" class="form-control rounded-4 shadow-sm p-3" placeholder="Describe the product..." style="border: 1px solid #dee2e6;"></textarea>
+                                            <span asp-validation-for="Product.Description" class="text-danger small fw-medium"></span>
+                                        </div>
 
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label asp-for="Product.ListPrice" class="form-label fw-bold"></label>
-                                <input asp-for="Product.ListPrice" class="form-control" placeholder="0.00" />
-                                <span asp-validation-for="Product.ListPrice" class="text-danger"></span>
-                            </div>
-                            <div class="col-md-6">
-                                <label asp-for="Product.Price" class="form-label fw-bold"></label>
-                                <input asp-for="Product.Price" class="form-control" placeholder="0.00" />
-                                <span asp-validation-for="Product.Price" class="text-danger"></span>
-                            </div>
-                        </div>
+                                        <div class="col-12">
+                                            <label asp-for="Product.IngredientsList" class="form-label text-muted small fw-bold mb-1 text-uppercase"></label>
+                                            <textarea asp-for="Product.IngredientsList" rows="3" class="form-control rounded-4 shadow-sm p-3" placeholder="Aqua, Glycerin, Niacinamide..." style="border: 1px solid #dee2e6;"></textarea>
+                                            <span asp-validation-for="Product.IngredientsList" class="text-danger small fw-medium"></span>
+                                        </div>
 
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label asp-for="Product.Category" class="form-label fw-bold"></label>
-                                <select asp-for="Product.Category" asp-items="@Model.CategoryList" class="form-select">
-                                    <option disabled selected>--Select Category--</option>
-                                </select>
-                                <span asp-validation-for="Product.Category" class="text-danger"></span>
-                            </div>
+                                        <div class="col-md-6">
+                                            <label asp-for="Product.MainIngredient" class="form-label text-muted small fw-bold mb-1 text-uppercase"></label>
+                                            <input asp-for="Product.MainIngredient" class="form-control rounded-pill shadow-sm ps-3" placeholder="Ex: Vitamin C" style="border: 1px solid #dee2e6;" />
+                                            <span asp-validation-for="Product.MainIngredient" class="text-danger small fw-medium"></span>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label asp-for="Product.Stock" class="form-label text-muted small fw-bold mb-1 text-uppercase"></label>
+                                            <input asp-for="Product.Stock" class="form-control rounded-pill shadow-sm ps-3" placeholder="Quantity" style="border: 1px solid #dee2e6;" />
+                                            <span asp-validation-for="Product.Stock" class="text-danger small fw-medium"></span>
+                                        </div>
 
-                            <div class="col-md-6">
-                                <label asp-for="Product.TargetSkinType" class="form-label fw-bold"></label>
-                                <select asp-for="Product.TargetSkinType" asp-items="@Model.SkinTypeList" class="form-select">
-                                    <option disabled selected>--Select Skin Type--</option>
-                                </select>
-                                <span asp-validation-for="Product.TargetSkinType" class="text-danger"></span>
-                            </div>
-                        </div>
+                                        <div class="col-md-6">
+                                            <label asp-for="Product.ListPrice" class="form-label text-muted small fw-bold mb-1 text-uppercase"></label>
+                                            <input asp-for="Product.ListPrice" class="form-control rounded-pill shadow-sm ps-3" placeholder="0.00" style="border: 1px solid #dee2e6;" />
+                                            <span asp-validation-for="Product.ListPrice" class="text-danger small fw-medium"></span>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label asp-for="Product.Price" class="form-label text-muted small fw-bold mb-1 text-uppercase"></label>
+                                            <input asp-for="Product.Price" class="form-control rounded-pill shadow-sm ps-3" placeholder="0.00" style="border: 1px solid #dee2e6;" />
+                                            <span asp-validation-for="Product.Price" class="text-danger small fw-medium"></span>
+                                        </div>
 
-                        <div class="mb-3">
-                            <label asp-for="Product.ImageUrl" class="form-label fw-bold"></label>
-                            <input type="file" id="uploadBox" name="file" class="form-control" />
-                        </div>
+                                        <div class="col-md-6">
+                                            <label asp-for="Product.Category" class="form-label text-muted small fw-bold mb-1 text-uppercase"></label>
+                                            <select asp-for="Product.Category" asp-items="@Model.CategoryList" class="form-select rounded-pill shadow-sm ps-3" style="border: 1px solid #dee2e6;">
+                                                <option disabled selected>-- Select Category --</option>
+                                            </select>
+                                            <span asp-validation-for="Product.Category" class="text-danger small fw-medium"></span>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label asp-for="Product.TargetSkinType" class="form-label text-muted small fw-bold mb-1 text-uppercase"></label>
+                                            <select asp-for="Product.TargetSkinType" asp-items="@Model.SkinTypeList" class="form-select rounded-pill shadow-sm ps-3" style="border: 1px solid #dee2e6;">
+                                                <option disabled selected>-- Select Skin Type --</option>
+                                            </select>
+                                            <span asp-validation-for="Product.TargetSkinType" class="text-danger small fw-medium"></span>
+                                        </div>
 
-                        <div class="row mt-4">
-                            <div class="col-6 col-md-3">
+                                        <div class="col-12">
+                                            <label asp-for="Product.ImageUrl" class="form-label text-muted small fw-bold mb-1 text-uppercase"></label>
+                                            <input type="file" id="uploadBox" name="file" class="form-control rounded-pill shadow-sm px-3" style="border: 1px solid #dee2e6;" />
+                                        </div>
+                                    </div>
+
+                                    <div class="row mt-5 pt-4 border-top g-3">
+                                        <div class="col-sm-6">
+                                            <button type="submit" onclick="return ValidateInput()" class="btn btn-primary w-100 rounded-pill py-2 fw-bold text-uppercase small shadow-sm d-flex justify-content-center align-items-center gap-2">
+                                                <i class="bi @(Model.Product.Id != 0 ? "bi-check2-circle" : "bi-plus-circle")"></i>
+                                                @(Model.Product.Id != 0 ? "Update Product" : "Create Product")
+                                            </button>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <a asp-controller="Product" asp-action="Index" class="btn btn-outline-dark w-100 rounded-pill py-2 fw-bold text-uppercase small shadow-sm d-flex justify-content-center align-items-center gap-2">
+                                                <i class="bi bi-x-circle"></i> Cancel
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 @if (Model.Product.Id != 0)
                                 {
-                                    <button type="submit" class="btn btn-primary form-control">Update</button>
+                                    <div class="col-md-3 mt-4 mt-md-0 border-start ps-md-4">
+                                        <label class="form-label text-muted small fw-bold mb-2 text-uppercase d-block text-center text-md-start">Current Image</label>
+                                        <div class="p-2 border rounded-4 shadow-sm bg-light text-center">
+                                            <img src="@Model.Product.ImageUrl" class="img-fluid rounded-3" style="max-height: 250px; object-fit: contain;" alt="Product Image" />
+                                        </div>
+                                    </div>
                                 }
-                                else
-                                {
-                                    <button type="submit" onclick="return ValidateInput()" class="btn btn-primary form-control">Create</button>
-                                }
-                            </div>
-                            <div class="col-6 col-md-3">
-                                <a asp-controller="Product" asp-action="Index" class="btn btn-outline-secondary form-control">Back to List</a>
+
                             </div>
                         </div>
-
                     </div>
-
-                    @if (Model.Product.Id != 0)
-                    {
-                        <div class="col-md-3 text-center">
-                            <label class="form-label fw-bold text-muted mb-3">Current Image</label>
-                            <div class="p-2 border rounded shadow-sm">
-                                <img src="@Model.Product.ImageUrl" width="100%" class="rounded" style="object-fit:cover;" />
-                            </div>
-                        </div>
-                    }
                 </div>
             </div>
+
         </div>
     </div>
 </form>
@@ -125,7 +131,10 @@
 
     <script>
         function ValidateInput(){
-            if(document.getElementById("uploadBox").value==""){
+            let productId = document.getElementById("Product_Id").value;
+            let uploadBox = document.getElementById("uploadBox").value;
+
+            if(productId == "0" && uploadBox == ""){
                 Swal.fire({
                   icon: 'error',
                   title: 'Oops...',
