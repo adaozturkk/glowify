@@ -3,53 +3,72 @@
 <form method="post">
     <input asp-for="Id" hidden />
 
-    <div class="row">
-        <div class="col-10 offset-1">
-            <div class="border p-4 mt-4 shadow-sm rounded">
-                <div class="row pb-3">
-                    <h2 class="text-primary">@(Model.Id == 0 ? "Create" : "Edit") Coupon</h2>
-                    <hr />
-                </div>
+    <div class="py-4 bg-white" style="min-height: 80vh;">
+        <div class="container mb-4">
 
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label asp-for="Code" class="form-label fw-bold"></label>
-                        <input asp-for="Code" class="form-control" placeholder="Ex: SUMMER2024" />
-                        <span asp-validation-for="Code" class="text-danger"></span>
-                    </div>
+            <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+                <h4 class="fw-bold text-dark mb-0">@(Model.Id == 0 ? "Create New" : "Edit") Coupon</h4>
+                <a asp-action="Index" class="btn btn-outline-dark rounded-pill px-3 py-1 shadow-sm d-flex align-items-center gap-2 fw-medium small">
+                    <i class="bi bi-arrow-left"></i> Back to List
+                </a>
+            </div>
 
-                    <div class="col-md-6 d-flex align-items-center mt-4">
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" role="switch" asp-for="IsActive">
-                            <label class="form-check-label fw-bold" asp-for="IsActive">Is Coupon Active?</label>
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="card border-0 shadow-sm rounded-3">
+                        <div class="card-header bg-white border-bottom py-3 rounded-top-3">
+                            <h6 class="fw-bold text-primary mb-0 text-uppercase d-flex align-items-center gap-2">
+                                <i class="bi bi-ticket-perforated fs-5"></i> Coupon Details
+                            </h6>
+                        </div>
+                        <div class="card-body p-4 p-md-5 bg-white rounded-bottom-3">
+
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label asp-for="Code" class="form-label text-muted small fw-bold mb-1 text-uppercase"></label>
+                                    <input asp-for="Code" class="form-control rounded-pill shadow-sm ps-3" placeholder="Ex: SUMMER2024" style="border: 1px solid #dee2e6;" />
+                                    <span asp-validation-for="Code" class="text-danger small fw-medium"></span>
+                                </div>
+
+                                <div class="col-md-6 d-flex align-items-center mt-md-5">
+                                    <div class="form-check form-switch fs-5 mb-0">
+                                        <input class="form-check-input shadow-sm" type="checkbox" role="switch" asp-for="IsActive" style="cursor: pointer;">
+                                        <label class="form-check-label fw-bold text-dark fs-6 ms-2 mt-1" asp-for="IsActive" style="cursor: pointer;">Active Status</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label asp-for="DiscountAmount" class="form-label text-muted small fw-bold mb-1 text-uppercase"></label>
+                                    <input asp-for="DiscountAmount" type="number" class="form-control rounded-pill shadow-sm ps-3" placeholder="0.00" style="border: 1px solid #dee2e6;" />
+                                    <span asp-validation-for="DiscountAmount" class="text-danger small fw-medium"></span>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label asp-for="MinAmount" class="form-label text-muted small fw-bold mb-1 text-uppercase"></label>
+                                    <input asp-for="MinAmount" type="number" class="form-control rounded-pill shadow-sm ps-3" placeholder="0.00" style="border: 1px solid #dee2e6;" />
+                                    <span asp-validation-for="MinAmount" class="text-danger small fw-medium"></span>
+                                </div>
+                            </div>
+
+                            <div class="row mt-5 pt-4 border-top g-3">
+                                <div class="col-sm-6">
+                                    <button type="submit" class="btn btn-primary w-100 rounded-pill py-2 fw-bold text-uppercase small shadow-sm d-flex justify-content-center align-items-center gap-2">
+                                        <i class="bi @(Model.Id == 0 ? "bi-plus-circle" : "bi-check2-circle")"></i>
+                                        @(Model.Id == 0 ? "Create Coupon" : "Update Coupon")
+                                    </button>
+                                </div>
+                                <div class="col-sm-6">
+                                    <a asp-action="Index" class="btn btn-outline-dark w-100 rounded-pill py-2 fw-bold text-uppercase small shadow-sm d-flex justify-content-center align-items-center gap-2">
+                                        <i class="bi bi-x-circle"></i> Cancel
+                                    </a>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
-
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label asp-for="DiscountAmount" class="form-label fw-bold"></label>
-                        <input asp-for="DiscountAmount" type="number" class="form-control" placeholder="0.00" />
-                        <span asp-validation-for="DiscountAmount" class="text-danger"></span>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label asp-for="MinAmount" class="form-label fw-bold"></label>
-                        <input asp-for="MinAmount" type="number" class="form-control" placeholder="0.00" />
-                        <span asp-validation-for="MinAmount" class="text-danger"></span>
-                    </div>
-                </div>
-
-                <div class="row mt-4">
-                    <div class="col-6 col-md-3">
-                        <button type="submit" class="btn btn-primary form-control">@(Model.Id == 0 ? "Create" : "Update")</button>
-                    </div>
-                    <div class="col-6 col-md-3">
-                        <a asp-action="Index" class="btn btn-outline-secondary form-control">Back to List</a>
-                    </div>
-                </div>
-
             </div>
+
         </div>
     </div>
 </form>

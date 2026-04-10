@@ -2,41 +2,68 @@
     ViewData["Title"] = "Coupon List";
 }
 
-<div class="container p-3">
-    <div class="row pt-4">
-        <div class="col-6">
-            <h2 class="text-primary">Coupon List</h2>
-        </div>
-        <div class="col-6 text-end">
-            <a asp-action="Upsert" class="btn btn-primary">
-                <i class="bi bi-plus-circle"></i> &nbsp; Create New Coupon
+<div class="py-4 bg-white" style="min-height: 80vh;">
+    <div class="container mb-4">
+
+        <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+            <h4 class="fw-bold text-dark mb-0">Coupon Management</h4>
+            <a asp-action="Upsert" class="btn btn-dark rounded-pill px-4 py-2 shadow-sm d-flex align-items-center gap-2 fw-medium small">
+                <i class="bi bi-plus-circle"></i> Create New Coupon
             </a>
         </div>
-    </div>
 
-    <div class="row pb-3 mt-3">
-        <div class="col-12">
-            <div class="btn-group" role="group">
-                <button type="button" class="btn btn-outline-primary active" onclick="filterTable('all', this)">All</button>
-                <button type="button" class="btn btn-outline-success" onclick="filterTable('Active', this)">Active</button>
-                <button type="button" class="btn btn-outline-danger" onclick="filterTable('Passive', this)">Passive</button>
+        <div class="mb-4 d-flex flex-wrap gap-2">
+            <button type="button"
+                    class="btn btn-outline-dark rounded-pill px-4 py-1 small shadow-sm filter-btn active"
+                    onclick="filterTable('all', this); updateFilterUI(this)">
+                All
+            </button>
+
+            <button type="button"
+                    class="btn btn-outline-success rounded-pill px-4 py-1 small filter-btn"
+                    onclick="filterTable('Active', this); updateFilterUI(this)">
+                Active
+            </button>
+
+            <button type="button"
+                    class="btn btn-outline-danger rounded-pill px-4 py-1 small filter-btn"
+                    onclick="filterTable('Passive', this); updateFilterUI(this)">
+                Passive
+            </button>
+        </div>
+
+        <div class="card border border-secondary border-opacity-25 shadow-sm rounded-3">
+            <div class="card-body p-4">
+                <div class="table-responsive">
+                    <table id="tblData" class="table table-bordered table-striped table-hover align-middle mb-0" style="width:100%">
+                        <thead class="table-light text-dark small text-uppercase fw-bold">
+                            <tr>
+                                <th class="py-3">Code</th>
+                                <th class="py-3">Discount Amount</th>
+                                <th class="py-3">Minimum Amount</th>
+                                <th class="py-3">Status</th>
+                                <th class="py-3 text-center" style="width: 15%">Actions</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
 
-    <table id="tblData" class="table table-bordered table-striped" style="width:100%">
-        <thead>
-            <tr>
-                <th>Code</th>
-                <th>Discount Amount</th>
-                <th>Minimum Amount</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-    </table>
+    </div>
 </div>
 
 @section Scripts {
     <script src="~/js/coupon.js"></script>
+    <script>
+        function updateFilterUI(clickedButton) {
+            let buttons = document.querySelectorAll('.filter-btn');
+
+            buttons.forEach(btn => {
+                btn.classList.remove('active', 'shadow-sm');
+            });
+
+            clickedButton.classList.add('active', 'shadow-sm');
+        }
+    </script>
 }

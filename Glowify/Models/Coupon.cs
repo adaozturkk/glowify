@@ -11,10 +11,12 @@ namespace Glowify.Models
         public string Code { get; set; }
 
         [Required]
+        [Range(1, 10000, ErrorMessage = "Discount must be between 1 and 10,000!")]
         [Display(Name = "Discount Amount")]
         public double DiscountAmount { get; set; }
 
         [Required]
+        [Range(0, 50000, ErrorMessage = "Minimum amount cannot be less than 0!")]
         [Display(Name = "Minimum Amount")]
         public double MinAmount { get; set; }
 
