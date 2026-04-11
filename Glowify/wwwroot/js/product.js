@@ -15,22 +15,33 @@ function loadDataTable() {
                 "data": "price",
                 "width": "15%",
                 "render": function (data) {
-                    return `${data}`;
+                    return parseFloat(data).toFixed(2) + ' ₺';
                 }
             },
-            { "data": "stock", "width": "15%" },
+            {
+                "data": "stock",
+                "width": "15%",
+                "className": "text-center",
+                "render": function (data) {
+                    if (data <= 0) {
+                        return '<span class="badge bg-danger rounded-pill px-2">Out of Stock</span>';
+                    }
+                    return data;
+                }
+            },
             { "data": "category", "width": "20%" },
             {
                 "data": "id",
                 "render": function (data) {
                     return `
-                        <div class="w-75 btn-group" role="group">
-                        <a href="/Admin/Product/Upsert?id=${data}"
-                        class="btn btn-primary mx-2"> <i class="bi bi-pencil-square"></i> Edit</a>
-                        <a onClick=Delete('/Admin/Product/Delete/${data}')
-                        class="btn btn-danger mx-2"> <i class="bi bi-trash-fill"></i> Delete</a>
-                        </div>
-                        `
+                        <div class="d-flex justify-content-center gap-2">
+                            <a href="/Admin/Product/Upsert?id=${data}" class="btn btn-outline-primary btn-sm rounded-pill px-3 d-flex align-items-center gap-1"> 
+                                <i class="bi bi-pencil-square"></i> Edit
+                            </a>               
+                            <a onClick=Delete('/Admin/Product/Delete/${data}') class="btn btn-outline-danger btn-sm rounded-pill px-3 d-flex align-items-center gap-1"> 
+                                <i class="bi bi-trash-fill"></i> Delete
+                            </a>
+                        </div>`
                 },
                 "width": "25%"
             }
@@ -44,8 +55,11 @@ function Delete(url) {
         text: "You won't be able to revert this!",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
+        customClass: {
+            confirmButton: 'btn btn-danger rounded-pill px-4 mx-2',
+            cancelButton: 'btn btn-dark rounded-pill px-4 mx-2'
+        },
+        buttonsStyling: false,
         confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
         if (result.isConfirmed) {

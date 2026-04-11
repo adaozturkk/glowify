@@ -18,8 +18,7 @@ $(document).ready(function () {
     else if (url.includes("cancelled")) {
         loadDataTable("cancelled");
     }
-    else if (url.includes("completed"))
-    {
+    else if (url.includes("completed")) {
         loadDataTable("completed")
     }
     else {
@@ -42,17 +41,40 @@ function loadDataTable(status) {
             { "data": "name", "width": "15%" },
             { "data": "phoneNumber", "width": "15%" },
             { "data": "applicationUser.email", "width": "15%" },
-            { "data": "orderStatus", "width": "15%" },
-            { "data": "orderTotal", "width": "10%" },
+            {
+                "data": "orderStatus",
+                "width": "15%",
+                "className": "text-center",
+                "render": function (data) {
+                    let badgeClass = "bg-secondary";
+
+                    if (data === "Pending") badgeClass = "bg-warning text-dark";
+                    else if (data === "Approved") badgeClass = "bg-primary";
+                    else if (data === "Processing") badgeClass = "bg-info text-dark";
+                    else if (data === "Shipped") badgeClass = "bg-info";
+                    else if (data === "Delivered") badgeClass = "bg-success";
+                    else if (data === "Cancelled") badgeClass = "bg-danger";
+                    else if (data === "Refunded") badgeClass = "bg-dark";
+
+                    return `<span class="badge ${badgeClass} rounded-pill px-3 py-2">${data}</span>`;
+                }
+            },
+            {
+                "data": "orderTotal",
+                "width": "10%",
+                "render": function (data) {
+                    return parseFloat(data).toFixed(2) + ' ₺';
+                }
+            },
             {
                 "data": "id",
                 "render": function (data) {
                     return `
-                        <div class="w-75 btn-group" role="group">
-                        <a href="${detailsUrl}?orderId=${data}"
-                        class="btn btn-primary mx-2"> <i class="bi bi-pencil-square"></i> Details</a>
-                        </div>
-                        `
+                        <div class="d-flex justify-content-center gap-2">
+                            <a href="${detailsUrl}?orderId=${data}" class="btn btn-outline-primary btn-sm rounded-pill px-4 d-flex align-items-center gap-1"> 
+                                <i class="bi bi-pencil-square"></i> Details
+                            </a>
+                        </div>`
                 },
                 "width": "15%"
             }

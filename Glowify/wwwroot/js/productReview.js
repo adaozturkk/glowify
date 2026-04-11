@@ -11,9 +11,17 @@ function loadDataTable() {
         "columns": [
             { data: 'product.name', "width": "15%" },
             { data: 'applicationUser.name', "width": "15%" },
-            { data: 'rating', "width": "5%" },
+            {
+                data: 'rating',
+                "width": "5%",
+                "className": "text-center",
+                "render": function (data) {
+                    return `<span class="fw-bold">${data}</span> <i class="bi bi-star-fill text-warning"></i>`;
+                }
+            },
             {
                 data: 'reviewDate',
+                "className": "text-center",
                 "render": function (data) {
                     if (!data) return "";
                     var date = new Date(data);
@@ -31,6 +39,7 @@ function loadDataTable() {
             },
             {
                 data: 'isApproved',
+                "className": "text-center",
                 "render": function (data) {
                     if (data) {
                         return `<span class="badge bg-success rounded-pill px-3 py-2"><i class="bi bi-check-circle"></i> Approved</span>`;
@@ -45,19 +54,19 @@ function loadDataTable() {
                 "render": function (data, type, row) {
                     if (row.isApproved) {
                         return `
-                        <div class="w-100 btn-group" role="group">
-                            <a onClick=Delete('/admin/productreview/delete/${data}') class="btn btn-danger mx-1 rounded">
+                        <div class="d-flex justify-content-center gap-2">
+                            <a onClick=Delete('/admin/productreview/delete/${data}') class="btn btn-outline-danger btn-sm rounded-pill px-3 d-flex align-items-center gap-1">
                                 <i class="bi bi-trash-fill"></i> Delete
                             </a>
                         </div>
                         `;
                     } else {
                         return `
-                        <div class="w-100 btn-group" role="group">
-                            <a onClick=Approve('/admin/productreview/approve/${data}') class="btn btn-success mx-1 rounded">
+                        <div class="d-flex justify-content-center gap-2">
+                            <a onClick=Approve('/admin/productreview/approve/${data}') class="btn btn-outline-success btn-sm rounded-pill px-3 d-flex align-items-center gap-1">
                                 <i class="bi bi-check-circle-fill"></i> Approve
                             </a>
-                            <a onClick=Delete('/admin/productreview/delete/${data}') class="btn btn-danger mx-1 rounded">
+                            <a onClick=Delete('/admin/productreview/delete/${data}') class="btn btn-outline-danger btn-sm rounded-pill px-3 d-flex align-items-center gap-1">
                                 <i class="bi bi-trash-fill"></i> Delete
                             </a>
                         </div>
@@ -77,8 +86,11 @@ function Delete(url) {
         text: "You won't be able to revert this!",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#6c757d',
+        customClass: {
+            confirmButton: 'btn btn-danger rounded-pill px-4 mx-2',
+            cancelButton: 'btn btn-dark rounded-pill px-4 mx-2'
+        },
+        buttonsStyling: false,
         confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
         if (result.isConfirmed) {
@@ -104,8 +116,11 @@ function Approve(url) {
         text: "This review will be visible to all customers on the product page.",
         icon: 'question',
         showCancelButton: true,
-        confirmButtonColor: '#198754',
-        cancelButtonColor: '#6c757d',
+        customClass: {
+            confirmButton: 'btn btn-success rounded-pill px-4 mx-2',
+            cancelButton: 'btn btn-dark rounded-pill px-4 mx-2'
+        },
+        buttonsStyling: false,
         confirmButtonText: 'Yes, approve it!'
     }).then((result) => {
         if (result.isConfirmed) {

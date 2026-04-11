@@ -13,33 +13,38 @@ function loadDataTable() {
                 data: 'discountAmount',
                 "width": "15%",
                 render: function (data) {
-                    return data;
+                    return data + ' ₺';
                 }
             },
             {
                 data: 'minAmount',
                 "width": "15%",
                 render: function (data) {
-                    return data;
+                    return data + ' ₺';
                 }
             },
             {
                 data: 'isActive',
                 "width": "15%",
+                "className": "text-center",
                 render: function (data) {
                     if (data === true) {
-                        return '<span class="badge bg-success">Active</span>';
+                        return '<span class="badge bg-success rounded-pill px-3 py-2">Active</span>';
                     } else {
-                        return '<span class="badge bg-danger">Passive</span>';
+                        return '<span class="badge bg-danger rounded-pill px-3 py-2">Passive</span>';
                     }
                 }
             },
             {
                 data: 'id',
                 "render": function (data) {
-                    return `<div class="w-75 btn-group" role="group">
-                     <a href="/Admin/Coupon/Upsert?id=${data}" class="btn btn-primary mx-2"> <i class="bi bi-pencil-square"></i> Edit</a>               
-                     <a onClick=Delete('/Admin/Coupon/Delete/${data}') class="btn btn-danger mx-2"> <i class="bi bi-trash-fill"></i> Delete</a>
+                    return `<div class="d-flex justify-content-center gap-2">
+                        <a href="/Admin/Coupon/Upsert?id=${data}" class="btn btn-outline-primary btn-sm rounded-pill px-3 d-flex align-items-center gap-1"> 
+                            <i class="bi bi-pencil-square"></i> Edit
+                        </a>               
+                        <a onClick=Delete('/Admin/Coupon/Delete/${data}') class="btn btn-outline-danger btn-sm rounded-pill px-3 d-flex align-items-center gap-1"> 
+                            <i class="bi bi-trash-fill"></i> Delete
+                        </a>
                     </div>`
                 },
                 "width": "25%"
@@ -48,15 +53,12 @@ function loadDataTable() {
     });
 }
 
-function filterTable(status, button) {
+function filterTable(status) {
     if (status === 'all') {
         dataTable.search('').columns().search('').draw();
     } else {
         dataTable.column(3).search(status).draw();
     }
-
-    $('.btn-group .btn').removeClass('active');
-    $(button).addClass('active');
 }
 
 function Delete(url) {
@@ -65,8 +67,11 @@ function Delete(url) {
         text: "You won't be able to revert this!",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
+        customClass: {
+            confirmButton: 'btn btn-danger rounded-pill px-4 mx-2',
+            cancelButton: 'btn btn-dark rounded-pill px-4 mx-2'
+        },
+        buttonsStyling: false,
         confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
         if (result.isConfirmed) {

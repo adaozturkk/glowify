@@ -14,16 +14,18 @@ function loadDataTable() {
             { data: 'role', "width": "15%" },
             {
                 data: 'lockoutEnd',
+                "className": "text-center",
                 "render": function (data) {
                     var today = new Date().getTime();
                     var lockout = new Date(data).getTime();
+
                     if (lockout > today) {
-                        return '<span class="badge bg-danger rounded-pill">Locked</span>';
+                        return '<span class="badge bg-danger rounded-pill px-3 py-2"><i class="bi bi-lock-fill"></i> Locked</span>';
                     } else {
-                        return '<span class="badge bg-success rounded-pill">Active</span>';
+                        return '<span class="badge bg-success rounded-pill px-3 py-2"><i class="bi bi-unlock-fill"></i> Active</span>';
                     }
                 },
-                "width": "10%"
+                "width": "15%"
             },
             {
                 data: { id: "id", lockoutEnd: "lockoutEnd" },
@@ -33,8 +35,8 @@ function loadDataTable() {
 
                     if (lockout > today) {
                         return `
-                        <div class="text-center">
-                            <a onclick=LockUnlock('${data.id}') class="btn btn-success text-white" style="cursor:pointer; width:100px;">
+                        <div class="d-flex justify-content-center gap-2">
+                            <a onclick="LockUnlock('${data.id}')" class="btn btn-outline-success btn-sm rounded-pill px-3 d-flex align-items-center justify-content-center gap-1" style="cursor:pointer; width: 100px;">
                                 <i class="bi bi-unlock-fill"></i> Unlock
                             </a>
                         </div>
@@ -42,15 +44,15 @@ function loadDataTable() {
                     }
                     else {
                         return `
-                        <div class="text-center">
-                            <a onclick=LockUnlock('${data.id}') class="btn btn-danger text-white" style="cursor:pointer; width:100px;">
+                        <div class="d-flex justify-content-center gap-2">
+                            <a onclick="LockUnlock('${data.id}')" class="btn btn-outline-danger btn-sm rounded-pill px-3 d-flex align-items-center justify-content-center gap-1" style="cursor:pointer; width: 100px;">
                                 <i class="bi bi-lock-fill"></i> Lock
                             </a>
                         </div>
                         `
                     }
                 },
-                "width": "25%"
+                "width": "20%"
             }
         ]
     });
