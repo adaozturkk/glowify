@@ -2,7 +2,9 @@
 using Glowify.Data.Repository.IRepository;
 using Glowify.Utility;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Glowify.Areas.Admin.Controllers
 {
@@ -23,7 +25,62 @@ namespace Glowify.Areas.Admin.Controllers
         {
             return View();
         }
-        
+
+        [HttpGet]
+        public IActionResult RoleManagement(string userId)
+        {
+            var user = _db.ApplicationUsers.FirstOrDefault(u => u.Id == userId);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var roleId = _db.UserRoles.FirstOrDefault(u => u.UserId == userId)?.RoleId;
+            var roleName = _db.Roles.FirstOrDefault(u => u.Id == roleId)?.Name;
+
+            user.Role = roleName;
+
+            ViewBag.RoleList = _db.Roles.Select(i => new SelectListItem
+            {
+                Text = i.Name,
+                Value = i.Name
+            });
+
+            return View(user);
+        }
+
+        [HttpPost]
+        public IActionResult RoleManagement(Glowify.Models.ApplicationUser user)
+        {
+            var roleId = _db.UserRoles.FirstOrDefault(u => u.UserId == user.Id)?.RoleId;
+            var oldRole = _db.Roles.FirstOrDefault(u => u.Id == roleId)?.Name;
+
+            if (user.Role != oldRole)
+            {
+                var oldUserRole = _db.UserRoles.FirstOrDefault(u => u.UserId == user.Id);
+                if (oldUserRole != null)
+                {
+                    _db.UserRoles.Remove(oldUserRole);
+                    _db.SaveChanges();
+                }
+
+                var newRoleId = _db.Roles.FirstOrDefault(u => u.Name == user.Role)?.Id;
+                if (newRoleId != null)
+                {
+                    _db.UserRoles.Add(new IdentityUserRole<string>
+                    {
+                        RoleId = newRoleId,
+                        UserId = user.Id
+                    });
+                    _db.SaveChanges();
+                }
+            }
+
+            TempData["success"] = "User role updated successfully!";
+            return RedirectToAction("Index");
+        }
+
 
         #region API CALLS
 

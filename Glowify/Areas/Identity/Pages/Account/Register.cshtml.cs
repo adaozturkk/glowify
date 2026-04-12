@@ -165,14 +165,7 @@ namespace Glowify.Areas.Identity.Pages.Account
 
                 if (result.Succeeded)
                 {
-                    if (Input.Role == null)
-                    {
-                        await _userManager.AddToRoleAsync(user, SD.Role_Customer);
-                    }
-                    else
-                    {
-                        await _userManager.AddToRoleAsync(user, Input.Role);
-                    }
+                    await _userManager.AddToRoleAsync(user, SD.Role_Customer);
 
                     _logger.LogInformation("User created a new account with password.");
 

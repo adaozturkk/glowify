@@ -39,6 +39,9 @@ function loadDataTable() {
                             <a onclick="LockUnlock('${data.id}')" class="btn btn-outline-success btn-sm rounded-pill px-3 d-flex align-items-center justify-content-center gap-1" style="cursor:pointer; width: 100px;">
                                 <i class="bi bi-unlock-fill"></i> Unlock
                             </a>
+                            <a href="/Admin/User/RoleManagement?userId=${data.id}" class="btn btn-primary btn-sm rounded-pill px-3 d-flex align-items-center justify-content-center gap-1" style="cursor:pointer; width: 130px;">
+                                 <i class="bi bi-person-gear"></i> Permission
+                            </a>
                         </div>
                         `
                     }
@@ -47,6 +50,9 @@ function loadDataTable() {
                         <div class="d-flex justify-content-center gap-2">
                             <a onclick="LockUnlock('${data.id}')" class="btn btn-outline-danger btn-sm rounded-pill px-3 d-flex align-items-center justify-content-center gap-1" style="cursor:pointer; width: 100px;">
                                 <i class="bi bi-lock-fill"></i> Lock
+                            </a>
+                            <a href="/Admin/User/RoleManagement?userId=${data.id}" class="btn btn-primary btn-sm rounded-pill px-3 d-flex align-items-center justify-content-center gap-1" style="cursor:pointer; width: 130px;">
+                                 <i class="bi bi-person-gear"></i> Permission
                             </a>
                         </div>
                         `
