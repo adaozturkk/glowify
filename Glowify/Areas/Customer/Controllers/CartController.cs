@@ -268,6 +268,8 @@ namespace Glowify.Areas.Customer.Controllers
 
             var applicationUser = _unitOfWork.ApplicationUser.Get(u => u.Id == shoppingCartVM.OrderHeader.ApplicationUserId);
 
+            string callbackUrl = _iyzicoOptions.Value.CallbackUrl ?? "https://glowify.runasp.net/Customer/Cart/CallBack";
+
             Iyzipay.Options options = new Iyzipay.Options();
             options.ApiKey = _iyzicoOptions.Value.ApiKey;
             options.SecretKey = _iyzicoOptions.Value.SecretKey;
@@ -281,7 +283,7 @@ namespace Glowify.Areas.Customer.Controllers
             request.Currency = Currency.TRY.ToString();
             request.BasketId = shoppingCartVM.OrderHeader.Id.ToString();
             request.PaymentGroup = PaymentGroup.PRODUCT.ToString();
-            request.CallbackUrl = "https://localhost:7213/Customer/Cart/CallBack?orderId=" + shoppingCartVM.OrderHeader.Id;
+            request.CallbackUrl = callbackUrl + "?orderId=" + shoppingCartVM.OrderHeader.Id;
             request.EnabledInstallments = new List<int>() { 2, 3, 6, 9 };
 
             Buyer buyer = new Buyer();
